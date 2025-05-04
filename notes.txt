@@ -1,0 +1,16 @@
+Readme: . venv/bin/activate
+
+Big Board:
+https://fftoday.com/articles/orth/24_pma_big_board_nonppr1.html
+
+Players:
+http://github.com/nflverse/nflverse-data/releases/download/players/players.csv
+
+More data:
+https://github.com/nflverse/nflverse-data/releases
+
+
+League ID
+1121477093499543552
+
+https://api.sleeper.app/v1/league/1121477093499543552/rosters
