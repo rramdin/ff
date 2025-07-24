@@ -1,0 +1,235 @@
+#1 Ravens
+100
+Mark Andrews
+Isaiah Likely
+Charlie Kolar
+Zaire Mitchell-Paden
+Sam Pitz
+#2 Jets
+99
+Mason Taylor
+Jeremy Ruckert
+Stone Smartt
+Zack Kuntz
+Neal Johnson
+#3 Falcons
+96
+Kyle Pitts
+Ques
+Charlie Woerner
+Feleipe Franks
+Teagan Quitoriano
+Nikola Kalinic
+#4 Titans
+93
+Chig Okonkwo
+Josh Whyle
+Gunnar Helm
+David Martin-Robinson
+Thomas Odukoya
+#5 Bills
+91
+Dawson Knox
+Dalton Kincaid
+Jackson Hawes
+Zach Davidson
+Keleki Latu
+#6 Browns
+89
+David Njoku
+Harold Fannin
+Blake Whiteheart
+Brenden Bates
+Sal Cannella
+#7 Cardinals
+87
+Trey McBride
+Tip Reiman
+Elijah Higgins
+Josiah Deguara
+Travis Vokolek
+#8 Chargers
+85
+Will Dissly
+Tyler Conklin
+Oronde Gadsden
+Tucker Fisk
+McCallan Castles
+#9 Lions
+85
+Sam LaPorta
+Brock Wright
+Kenny Yeboah
+Shane Zylstra
+Luke Deal
+#10 Texans
+83
+Dalton Schultz
+Brevin Jordan
+Ques
+Cade Stover
+Ques
+Luke Lachey
+Irv Smith
+#11 Steelers
+79
+Pat Freiermuth
+Jonnu Smith
+Darnell Washington
+Connor Heyward
+J.J. Galbreath
+#12 Seahawks
+77
+Noah Fant
+Elijah Arroyo
+AJ Barner
+Eric Saubert
+Nick Kallerup
+#13 Dolphins
+76
+Darren Waller
+Julian Hill
+Pharaoh Brown
+Tanner Conner
+Hayden Rucci
+#14 Jaguars
+74
+Brenton Strange
+Johnny Mundt
+Hunter Long
+Quintin Morris
+Shawn Bowman
+#15 49ers
+73
+George Kittle
+Luke Farrell
+Ross Dwelley
+Brayden Willis
+Jake Tonges
+#16 Bengals
+70
+Mike Gesicki
+Drew Sample
+Erick All
+Ques
+Tanner Hudson
+Tanner McLachlan
+#17 Patriots
+70
+Hunter Henry
+Austin Hooper
+Jaheim Bell
+Jack Westover
+C.J. Dippre
+#18 Saints
+63
+Juwan Johnson
+Taysom Hill
+Ques
+Foster Moreau
+Ques
+Jack Stoll
+Moliki Matavao
+#19 Panthers
+60
+Tommy Tremble
+Ques
+Ja'Tavion Sanders
+Mitchell Evans
+Dominique Dafney
+James Mitchell
+#20 Broncos
+56
+Evan Engram
+Adam Trautman
+Lucas Krull
+Nate Adkins
+Caleb Lohner
+#21 Colts
+50
+Tyler Warren
+Mo Alie-Cox
+Drew Ogletree
+Jelani Woods
+Will Mallory
+#22 Packers
+50
+Tucker Kraft
+Luke Musgrave
+Ben Sims
+John FitzPatrick
+Messiah Swinson
+#23 Bears
+48
+Cole Kmet
+Colston Loveland
+Ques
+Durham Smythe
+Stephen Carlson
+Joel Wilson
+#24 Buccaneers
+48
+Cade Otton
+Payne Durham
+Ko Kieft
+Devin Culp
+Tanner Taula
+#25 Rams
+48
+Tyler Higbee
+Terrance Ferguson
+Colby Parkinson
+Davis Allen
+Mark Redman
+#26 Raiders
+27
+Brock Bowers
+Michael Mayer
+Ian Thomas
+Justin Shorter
+Qadir Ismail
+#27 Vikings
+26
+T.J. Hockenson
+Josh Oliver
+Gavin Bartholomew
+Ques
+Giovanni Ricci
+Benjamin Yurosek
+#28 Giants
+22
+Theo Johnson
+Daniel Bellinger
+Chris Manhertz
+Greg Dulcich
+Thomas Fidone
+#29 Eagles
+21
+Dallas Goedert
+Grant Calcaterra
+Kylen Granson
+Harrison Bryant
+E.J. Jenkins
+#30 Cowboys
+11
+Jake Ferguson
+Luke Schoonmaker
+Brevyn Spann-Ford
+John Stephens
+Ques
+Princeton Fant
+#31 Chiefs
+10
+Travis Kelce
+Noah Gray
+Jared Wiley
+Ques
+Robert Tonyan
+Geor'quarius Spivey
+#32 Commanders
+0
+Zach Ertz
+John Bates
+Ben Sinnott
+Colson Yankoff
+Tyree Jackson

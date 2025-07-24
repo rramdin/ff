@@ -1,0 +1,647 @@
+[
+    {
+        "co_owners": null,
+        "keepers": [
+            "7564",
+            "9493"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn_inactive_starters": "on",
+            "allow_pn_player_injury_status": "on",
+            "allow_pn_scoring": "on",
+            "restrict_pn_scoring_starters_only": "on"
+        },
+        "owner_id": "1000121082298400768",
+        "player_map": null,
+        "players": [
+            "10226",
+            "1479",
+            "1689",
+            "3163",
+            "5012",
+            "6803",
+            "7021",
+            "7528",
+            "7564",
+            "7588",
+            "7611",
+            "8143",
+            "9493",
+            "9753",
+            "9757",
+            "PIT"
+        ],
+        "reserve": [
+            "7528"
+        ],
+        "roster_id": 1,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 7,
+            "wins": 0
+        },
+        "starters": [
+            "3163",
+            "7611",
+            "7588",
+            "9493",
+            "7564",
+            "5012",
+            "9753",
+            "0",
+            "PIT"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "11566",
+            "9226"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn_inactive_starters": "off",
+            "allow_pn_player_injury_status": "off",
+            "allow_pn_scoring": "on",
+            "restrict_pn_scoring_starters_only": "on"
+        },
+        "owner_id": "1121487617830268928",
+        "player_map": null,
+        "players": [
+            "10229",
+            "11566",
+            "11624",
+            "1426",
+            "1945",
+            "6786",
+            "6797",
+            "8111",
+            "8112",
+            "8151",
+            "8408",
+            "9226",
+            "9480"
+        ],
+        "reserve": null,
+        "roster_id": 2,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": -12,
+            "waiver_position": 9,
+            "wins": 0
+        },
+        "starters": [
+            "11566",
+            "9226",
+            "8151",
+            "8112",
+            "11624",
+            "9480",
+            "0",
+            "1945",
+            "0"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "11584",
+            "11604"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn_inactive_starters": "on",
+            "allow_pn_player_injury_status": "on",
+            "allow_pn_scoring": "on",
+            "restrict_pn_scoring_starters_only": "on"
+        },
+        "owner_id": "1121496651656470528",
+        "player_map": null,
+        "players": [
+            "10937",
+            "11584",
+            "11604",
+            "4098",
+            "4381",
+            "4943",
+            "4988",
+            "5846",
+            "5872",
+            "7543",
+            "8137",
+            "8154",
+            "8183",
+            "9500",
+            "IND",
+            "LAC"
+        ],
+        "reserve": null,
+        "roster_id": 3,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 4,
+            "wins": 0
+        },
+        "starters": [
+            "4943",
+            "8154",
+            "11584",
+            "5846",
+            "8137",
+            "11604",
+            "7543",
+            "0",
+            "LAC"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "6813",
+            "8155"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "1121497299739418624",
+        "player_map": null,
+        "players": [
+            "10219",
+            "11575",
+            "11576",
+            "11579",
+            "11637",
+            "1234",
+            "3198",
+            "4037",
+            "4217",
+            "5859",
+            "6806",
+            "6813",
+            "8134",
+            "8155",
+            "8259",
+            "ATL"
+        ],
+        "reserve": null,
+        "roster_id": 4,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 11,
+            "wins": 0
+        },
+        "starters": [
+            "0",
+            "6806",
+            "6813",
+            "4037",
+            "8134",
+            "4217",
+            "11579",
+            "8259",
+            "ATL"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "11631",
+            "7569"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn_inactive_starters": "on",
+            "allow_pn_player_injury_status": "on",
+            "allow_pn_scoring": "on",
+            "restrict_pn_scoring_starters_only": "on"
+        },
+        "owner_id": "1121657803124416512",
+        "player_map": null,
+        "players": [
+            "11564",
+            "11631",
+            "11632",
+            "4018",
+            "4035",
+            "4981",
+            "5849",
+            "5850",
+            "6650",
+            "7525",
+            "7569",
+            "8130",
+            "9484",
+            "GB",
+            "TEN"
+        ],
+        "reserve": null,
+        "roster_id": 5,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 5,
+            "wins": 0
+        },
+        "starters": [
+            "5849",
+            "5850",
+            "4018",
+            "11631",
+            "7569",
+            "8130",
+            "11632",
+            "6650",
+            "GB"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "5045",
+            "8150"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "1122261683939926016",
+        "player_map": null,
+        "players": [
+            "11563",
+            "4033",
+            "4663",
+            "4892",
+            "5001",
+            "5045",
+            "5096",
+            "6938",
+            "7042",
+            "8136",
+            "8146",
+            "8150",
+            "9756",
+            "9997",
+            "DET",
+            "SF"
+        ],
+        "reserve": null,
+        "roster_id": 6,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 12,
+            "waiver_position": 1,
+            "wins": 0
+        },
+        "starters": [
+            "4892",
+            "0",
+            "8136",
+            "9756",
+            "5045",
+            "5001",
+            "9997",
+            "7042",
+            "SF"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "8205",
+            "9509"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "740001066229317632",
+        "player_map": null,
+        "players": [
+            "11560",
+            "11620",
+            "1339",
+            "4195",
+            "4881",
+            "5086",
+            "5947",
+            "5967",
+            "6219",
+            "7049",
+            "7526",
+            "8132",
+            "8148",
+            "8205",
+            "8255",
+            "9509",
+            "KC"
+        ],
+        "reserve": null,
+        "roster_id": 7,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 12,
+            "wins": 0
+        },
+        "starters": [
+            "4881",
+            "9509",
+            "5967",
+            "5947",
+            "8148",
+            "1339",
+            "8205",
+            "4195",
+            "KC"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "9221",
+            "9758"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn_inactive_starters": "off",
+            "allow_pn_player_injury_status": "off",
+            "allow_pn_scoring": "off",
+            "restrict_pn_scoring_starters_only": "on"
+        },
+        "owner_id": "1122537136126824448",
+        "player_map": null,
+        "players": [
+            "10444",
+            "11533",
+            "1166",
+            "2309",
+            "2359",
+            "4144",
+            "4983",
+            "6801",
+            "7553",
+            "9221",
+            "9225",
+            "9502",
+            "9508",
+            "9754",
+            "9758",
+            "NYJ"
+        ],
+        "reserve": null,
+        "roster_id": 8,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 2,
+            "wins": 0
+        },
+        "starters": [
+            "9758",
+            "9221",
+            "9225",
+            "2309",
+            "4983",
+            "4144",
+            "6801",
+            "11533",
+            "NYJ"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "11635",
+            "5927"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "1124552935863709696",
+        "player_map": null,
+        "players": [
+            "10859",
+            "11635",
+            "11655",
+            "1466",
+            "2133",
+            "3451",
+            "4137",
+            "5248",
+            "5892",
+            "5927",
+            "5987",
+            "6770",
+            "8144",
+            "8676",
+            "9488",
+            "MIA"
+        ],
+        "reserve": null,
+        "roster_id": 9,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 10,
+            "wins": 0
+        },
+        "starters": [
+            "6770",
+            "5987",
+            "4137",
+            "5927",
+            "2133",
+            "1466",
+            "9488",
+            "3451",
+            "MIA"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "6819"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "1124890083296948224",
+        "player_map": null,
+        "players": [
+            "10955",
+            "11651",
+            "2216",
+            "2306",
+            "4066",
+            "4199",
+            "4984",
+            "5844",
+            "6783",
+            "6790",
+            "6794",
+            "6819",
+            "7090",
+            "8138",
+            "8583",
+            "DEN",
+            "SEA"
+        ],
+        "reserve": null,
+        "roster_id": 10,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 8,
+            "wins": 0
+        },
+        "starters": [
+            "4984",
+            "8138",
+            "4199",
+            "6794",
+            "2216",
+            "5844",
+            "11651",
+            "10955",
+            "DEN"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": [
+            "3321",
+            "4866"
+        ],
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "1125142477238927360",
+        "player_map": null,
+        "players": [
+            "10222",
+            "2020",
+            "2374",
+            "3214",
+            "3321",
+            "4039",
+            "421",
+            "4866",
+            "6904",
+            "6943",
+            "7571",
+            "7594",
+            "8110",
+            "8126",
+            "8228",
+            "9224",
+            "BUF"
+        ],
+        "reserve": null,
+        "roster_id": 11,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 3,
+            "wins": 0
+        },
+        "starters": [
+            "0",
+            "4866",
+            "9224",
+            "3321",
+            "4039",
+            "3214",
+            "10222",
+            "2020",
+            "BUF"
+        ],
+        "taxi": null
+    },
+    {
+        "co_owners": null,
+        "keepers": null,
+        "league_id": "1180175940712742912",
+        "metadata": null,
+        "owner_id": "1125141586498678784",
+        "player_map": null,
+        "players": [
+            "10236",
+            "11586",
+            "11628",
+            "11647",
+            "11834",
+            "1373",
+            "4068",
+            "5010",
+            "5119",
+            "5906",
+            "6768",
+            "6804",
+            "8121",
+            "9486",
+            "PHI"
+        ],
+        "reserve": null,
+        "roster_id": 12,
+        "settings": {
+            "fpts": 0,
+            "losses": 0,
+            "ties": 0,
+            "total_moves": 0,
+            "waiver_budget_used": 0,
+            "waiver_position": 6,
+            "wins": 0
+        },
+        "starters": [
+            "6804",
+            "11586",
+            "11647",
+            "11628",
+            "11834",
+            "10236",
+            "8121",
+            "5119",
+            "PHI"
+        ],
+        "taxi": null
+    }
+]

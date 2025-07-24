@@ -1,0 +1,190 @@
+#1 Cardinals
+100
+Kyler Murray
+Jacoby Brissett
+Clayton Tune
+#2 Texans
+88
+C.J. Stroud
+Davis Mills
+Graham Mertz
+Kedon Slovis
+#3 Jets
+76
+Justin Fields
+Tyrod Taylor
+Adrian Martinez
+Brady Cook
+#4 Panthers
+76
+Bryce Young
+Andy Dalton
+Jack Plummer
+Ethan Garbers
+#5 Titans
+74
+Cameron Ward
+Will Levis
+Brandon Allen
+Tim Boyle
+#6 Rams
+72
+Matthew Stafford
+Jimmy Garoppolo
+Stetson Bennett
+#7 Seahawks
+72
+Sam Darnold
+Jalen Milroe
+Drew Lock
+#8 Jaguars
+71
+Trevor Lawrence
+Ques
+Nick Mullens
+John Wolford
+Seth Henigan
+#9 49ers
+68
+Brock Purdy
+Mac Jones
+Kurtis Rourke
+Ques
+Tanner Mordecai
+#10 Chiefs
+68
+Patrick Mahomes
+Gardner Minshew
+Bailey Zappe
+Chris Oladokun
+#11 Falcons
+67
+Michael Penix
+Kirk Cousins
+Easton Stick
+Emory Jones
+#12 Dolphins
+66
+Tua Tagovailoa
+Zach Wilson
+Quinn Ewers
+Brett Gabbert
+#13 Saints
+61
+Tyler Shough
+Spencer Rattler
+Jake Haener
+Ques
+Hunter Dekkers
+#14 Buccaneers
+54
+Baker Mayfield
+Kyle Trask
+Michael Pratt
+Connor Bazelak
+#15 Colts
+53
+Anthony Richardson
+Ques
+Daniel Jones
+Riley Leonard
+Jason Bean
+#16 Eagles
+53
+Jalen Hurts
+Tanner McKee
+D. Thompson-Robinson
+Kyle McCord
+#17 Broncos
+52
+Bo Nix
+Jarrett Stidham
+Sam Ehlinger
+#18 Steelers
+46
+Aaron Rodgers
+Mason Rudolph
+Will Howard
+Skylar Thompson
+#19 Packers
+45
+Jordan Love
+Malik Willis
+Sean Clifford
+Taylor Elgersma
+#20 Bears
+44
+Caleb Williams
+Tyson Bagent
+Case Keenum
+Austin Reed
+#21 Patriots
+43
+Drake Maye
+Joshua Dobbs
+Ben Wooldridge
+#22 Chargers
+42
+Justin Herbert
+Taylor Heinicke
+Trey Lance
+DJ Uiagalelei
+#23 Browns
+35
+Deshaun Watson
+Ques
+Joe Flacco
+Kenny Pickett
+Dillon Gabriel
+Shedeur Sanders
+#24 Bills
+34
+Josh Allen
+Mitchell Trubisky
+Mike White
+Shane Buechele
+#25 Raiders
+34
+Geno Smith
+Aidan O'Connell
+Cam Miller
+Carter Bradley
+#26 Ravens
+32
+Lamar Jackson
+Cooper Rush
+Devin Leary
+#27 Lions
+27
+Jared Goff
+Hendon Hooker
+Kyle Allen
+#28 Commanders
+24
+Jayden Daniels
+Marcus Mariota
+Josh Johnson
+Sam Hartman
+#29 Vikings
+24
+J.J. McCarthy
+Sam Howell
+Brett Rypien
+Max Brosmer
+#30 Bengals
+22
+Joe Burrow
+Jake Browning
+Logan Woodside
+Payton Thorne
+#31 Giants
+19
+Russell Wilson
+Jameis Winston
+Jaxson Dart
+Tommy DeVito
+#32 Cowboys
+0
+Dak Prescott
+Joe Milton
+Will Grier

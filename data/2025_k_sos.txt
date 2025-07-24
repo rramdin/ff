@@ -1,0 +1,112 @@
+#1 Saints
+100
+Blake Grupe
+Charlie Smyth
+#2 Falcons
+91
+Younghoe Koo
+Lenny Krieg
+#3 Buccaneers
+78
+Chase McLaughlin
+Ryan Coe
+#4 49ers
+77
+Jake Moody
+Greg Joseph
+#5 Panthers
+76
+Matthew Wright
+Ryan Fitzgerald
+#6 Patriots
+74
+Andres Borregales
+John Parker Romo
+#7 Seahawks
+71
+Jason Myers
+#8 Jets
+70
+Caden Davis
+Harrison Mevis
+#9 Bills
+66
+Tyler Bass
+#10 Cardinals
+63
+Chad Ryland
+#11 Jaguars
+63
+Cam Little
+#12 Rams
+58
+Joshua Karty
+#13 Titans
+57
+Joey Slye
+#14 Colts
+55
+Spencer Shrader
+Maddux Trujillo
+#15 Dolphins
+54
+Jason Sanders
+#16 Texans
+53
+Ka'imi Fairbairn
+#17 Chiefs
+40
+Harrison Butker
+#18 Chargers
+39
+Cameron Dicker
+#19 Broncos
+33
+Wil Lutz
+#20 Browns
+33
+Dustin Hopkins
+Andre Szmyt
+#21 Eagles
+32
+Jake Elliott
+#22 Packers
+32
+Brandon McManus
+Alex Hale
+#23 Cowboys
+29
+Brandon Aubrey
+Ques
+#24 Bengals
+27
+Evan McPherson
+Cade York
+#25 Raiders
+26
+Daniel Carlson
+#26 Commanders
+25
+Matt Gay
+#27 Giants
+25
+Graham Gano
+Jude McAtamney
+#28 Steelers
+20
+Chris Boswell
+Ben Sauls
+#29 Ravens
+9
+Tyler Loop
+John Hoyland
+#30 Vikings
+5
+Will Reichard
+#31 Bears
+0
+Cairo Santos
+Jonathan Kim
+#32 Lions
+0
+Jake Bates

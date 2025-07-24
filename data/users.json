@@ -1,0 +1,234 @@
+[
+    {
+        "avatar": "e7af4deab0289b4f5505646424895246",
+        "display_name": "lou732",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "avatar": "https://sleepercdn.com/images/v3/avatars/avatar_default_blue.webp",
+            "mention_pn": "on",
+            "team_name": "Ragtag Bunch of Misfits"
+        },
+        "settings": null,
+        "user_id": "740001066229317632"
+    },
+    {
+        "avatar": "1cbd2f9f78cb6d5fe3ac6daef1cd06cd",
+        "display_name": "dmmar5220",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "avatar": "https://sleepercdn.com/uploads/7f8b791ab30ae330070168033f3b6396.jpg",
+            "league_report_pn": "on",
+            "mascot_message": "on",
+            "mention_pn": "on",
+            "player_like_pn": "on",
+            "player_nickname_update": "on",
+            "team_name": "Likely to Puka Olave You",
+            "team_name_update": "on",
+            "trade_block_pn": "on",
+            "transaction_commissioner": "off",
+            "transaction_free_agent": "off",
+            "transaction_trade": "on",
+            "transaction_waiver": "off",
+            "user_message_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1000121082298400768"
+    },
+    {
+        "avatar": "15d7cf259bc30eab8f6120f45f652fb6",
+        "display_name": "dtfahy",
+        "is_bot": false,
+        "is_owner": true,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "avatar": "https://sleepercdn.com/uploads/d57e648c2900e85d47dbf339439b81da.jpg",
+            "league_report_pn": "off",
+            "mascot_message": "off",
+            "mention_pn": "on",
+            "player_like_pn": "off",
+            "player_nickname_update": "off",
+            "team_name": "The Chefs",
+            "team_name_update": "off",
+            "trade_block_pn": "off",
+            "transaction_commissioner": "off",
+            "transaction_free_agent": "off",
+            "transaction_trade": "off",
+            "transaction_waiver": "off",
+            "user_message_pn": "off"
+        },
+        "settings": null,
+        "user_id": "1121487617830268928"
+    },
+    {
+        "avatar": "82aec8e811b839b8ec25d7b458afd57b",
+        "display_name": "Theincrediblerob",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "league_report_pn": "on",
+            "mascot_message": "on",
+            "mention_pn": "on",
+            "player_like_pn": "on",
+            "player_nickname_update": "on",
+            "team_name": "Habitual Stinker!",
+            "team_name_update": "on",
+            "trade_block_pn": "on",
+            "transaction_commissioner": "on",
+            "transaction_free_agent": "on",
+            "transaction_trade": "on",
+            "transaction_waiver": "on",
+            "user_message_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1121496651656470528"
+    },
+    {
+        "avatar": "98f17952d4e6e042169974c5a65caca4",
+        "display_name": "rramdin",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "archived": "off",
+            "avatar": "https://sleepercdn.com/uploads/9d1fa6c61045cd8740d607c2f58501d6.jpg",
+            "mention_pn": "on",
+            "team_name": "RamRod Chili Peppers"
+        },
+        "settings": null,
+        "user_id": "1121497299739418624"
+    },
+    {
+        "avatar": "f0edbf4278f53f9425db175073df6584",
+        "display_name": "JG271309",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "league_report_pn": "off",
+            "mascot_message": "off",
+            "mention_pn": "on",
+            "player_like_pn": "on",
+            "player_nickname_update": "off",
+            "team_name": "London Bridge ",
+            "team_name_update": "off",
+            "trade_block_pn": "on",
+            "transaction_commissioner": "off",
+            "transaction_free_agent": "on",
+            "transaction_trade": "on",
+            "transaction_waiver": "on",
+            "user_message_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1121657803124416512"
+    },
+    {
+        "avatar": "97fb4afdc59b2ee4d8fb51179c694781",
+        "display_name": "showtimes524",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "mention_pn": "on",
+            "team_name": "Uncle Ricos Bastard"
+        },
+        "settings": null,
+        "user_id": "1122261683939926016"
+    },
+    {
+        "avatar": "82aec8e811b839b8ec25d7b458afd57b",
+        "display_name": "Dukdezando",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "league_report_pn": "off",
+            "mascot_message": "off",
+            "mention_pn": "on",
+            "player_like_pn": "off",
+            "player_nickname_update": "off",
+            "team_name_update": "off",
+            "trade_block_pn": "off",
+            "transaction_commissioner": "off",
+            "transaction_free_agent": "off",
+            "transaction_trade": "off",
+            "transaction_waiver": "off",
+            "user_message_pn": "off"
+        },
+        "settings": null,
+        "user_id": "1122537136126824448"
+    },
+    {
+        "avatar": "4f4090e5e9c3941414db40a871e3e909",
+        "display_name": "pmcsherr",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1124552935863709696"
+    },
+    {
+        "avatar": "e7af4deab0289b4f5505646424895246",
+        "display_name": "Barrett1018",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1124890083296948224"
+    },
+    {
+        "avatar": "b3338675f635c2c1f42b469621d38ec6",
+        "display_name": "MBurke64",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "mention_pn": "on",
+            "team_name": "Brotherly Love"
+        },
+        "settings": null,
+        "user_id": "1125141586498678784"
+    },
+    {
+        "avatar": "b319fdf8b7b5b0359d3c78622ba4d70c",
+        "display_name": "leastimportantgelb",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "mention_pn": "on",
+            "team_name": "Sake Won"
+        },
+        "settings": null,
+        "user_id": "1125142477238927360"
+    }
+]

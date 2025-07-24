@@ -1,0 +1,227 @@
+#1 Falcons
+100
+Bijan Robinson
+Tyler Allgeier
+Carlos Washington
+Elijah Dotson
+Jashaun Corbin
+#2 Jets
+95
+Breece Hall
+Braelon Allen
+Isaiah Davis
+Kene Nwangwu
+Zach Evans
+#3 Saints
+95
+Alvin Kamara
+Kendre Miller
+Devin Neal
+Cam Akers
+Clyde Edwards-Helaire
+#4 49ers
+80
+Christian McCaffrey
+Isaac Guerendo
+Jordan James
+Patrick Taylor
+Israel Abanikanda
+#5 Cardinals
+79
+James Conner
+Trey Benson
+Emari Demercado
+Michael Carter
+DeeJay Dallas
+#6 Dolphins
+78
+De'Von Achane
+Jaylen Wright
+Alexander Mattison
+Ollie Gordon
+Nate Noel
+#7 Buccaneers
+77
+Bucky Irving
+Rachaad White
+Sean Tucker
+D.J. Williams
+Josh Williams
+#8 Seahawks
+77
+Kenneth Walker
+Ques
+Zach Charbonnet
+Kenny McIntosh
+Damien Martinez
+George Holani
+#9 Patriots
+75
+Rhamondre Stevenson
+TreVeyon Henderson
+Antonio Gibson
+Trayveon Williams
+Lan Larison
+#10 Panthers
+67
+Chuba Hubbard
+Rico Dowdle
+Trevor Etienne
+Raheem Blackshear
+Emani Bailey
+#11 Texans
+64
+Joe Mixon
+Ques
+Nick Chubb
+Dameon Pierce
+Woody Marks
+Dare Ogunbowale
+#12 Rams
+63
+Kyren Williams
+Blake Corum
+Jarquez Hunter
+Ronnie Rivers
+Cody Schrader
+#13 Titans
+56
+Tony Pollard
+Tyjae Spears
+Julius Chestnut
+Kalel Mullings
+Tyrion Davis-Price
+#14 Jaguars
+55
+Travis Etienne
+Tank Bigsby
+Bhayshul Tuten
+LeQuint Allen
+Ja'Quinden Jackson
+#15 Browns
+49
+Jerome Ford
+Quinshon Judkins
+Dylan Sampson
+Pierre Strong
+Ahmani Marshall
+#16 Chiefs
+44
+Isiah Pacheco
+Kareem Hunt
+Elijah Mitchell
+Brashard Smith
+Elijah Young
+#17 Colts
+39
+Jonathan Taylor
+Khalil Herbert
+DJ Giddens
+Tyler Goodson
+Salvon Ahmed
+#18 Eagles
+37
+Saquon Barkley
+Will Shipley
+AJ Dillon
+Avery Williams
+Lew Nichols
+#19 Packers
+33
+Josh Jacobs
+MarShawn Lloyd
+Emanuel Wilson
+Chris Brooks
+Amar Johnson
+#20 Bengals
+28
+Chase Brown
+Zack Moss
+Samaje Perine
+Tahj Brooks
+Gary Brightwell
+#21 Bills
+27
+James Cook
+Ray Davis
+Ty Johnson
+Darrynton Evans
+Frank Gore
+#22 Cowboys
+27
+Javonte Williams
+Miles Sanders
+Jaydon Blue
+Deuce Vaughn
+Phil Mafah
+#23 Raiders
+25
+Ashton Jeanty
+Raheem Mostert
+Sincere McCormick
+Zamir White
+Dylan Laube
+#24 Steelers
+25
+Jaylen Warren
+Kaleb Johnson
+Kenneth Gainwell
+Trey Sermon
+Cordarrelle Patterson
+#25 Broncos
+21
+RJ Harvey
+J.K. Dobbins
+Audric Estime
+Jaleel McLaughlin
+Tyler Badie
+#26 Giants
+19
+Tyrone Tracy
+Devin Singletary
+Cam Skattebo
+Eric Gray
+Dante Miller
+#27 Vikings
+18
+Aaron Jones
+Jordan Mason
+Ty Chandler
+Zavier Scott
+Tre Stewart
+#28 Chargers
+17
+Najee Harris
+Ques
+Omarion Hampton
+Hassan Haskins
+Kimani Vidal
+Jaret Patterson
+#29 Bears
+12
+D'Andre Swift
+Roschon Johnson
+Kyle Monangai
+Travis Homer
+Ian Wheeler
+#30 Ravens
+12
+Derrick Henry
+Justice Hill
+Keaton Mitchell
+Rasheen Ali
+Marcus Major
+#31 Lions
+1
+Jahmyr Gibbs
+David Montgomery
+Craig Reynolds
+Sione Vaki
+Kye Robichaux
+#32 Commanders
+0
+Brian Robinson
+Austin Ekeler
+Chris Rodriguez
+Jeremy McNichols
+Jacory Croskey-Merritt
