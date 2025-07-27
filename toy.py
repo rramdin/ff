@@ -1,4 +1,6 @@
 import json
+import re
+import csv
 
 def load_sleeper():
     pos = set()
@@ -19,5 +21,21 @@ def load_sleeper():
     print("Positions:", pos)
     print("Teams:", team)
 
-load_sleeper()
+#load_sleeper()
 
+INJURIES_FILE = "data/2025_draft_shark_injury_predictions.csv"
+
+def load_injury_predictions():
+    with open(INJURIES_FILE, "r") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            print(r)
+            match = re.match(r"([ \S]+([a-z\.]| I*))[A-Z]+ \d+$", r["player"])
+            name = match.group(1)
+            career_injuries = int(r['career_injuries'])
+            injury_risk = r['injury_risk']
+            injury_risk_per_season = r['injury_risk_per_season']
+            durability = r['durability']
+            projected_games_missed = r['projected_games_missed']
+
+load_injury_predictions()

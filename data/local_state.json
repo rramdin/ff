@@ -1,11 +1,9 @@
 {
-    "overrides": {
-        "4984": "1121497299739418624"
-    },
+    "overrides": {},
     "notes": {
         "4984": [
             "Love",
-            "Josh Allen is the best"
+            "Josh Allen is the best\n"
         ],
         "8137": [
             "Love",
@@ -53,7 +51,7 @@
         ],
         "8112": [
             "Like",
-            "Player liked"
+            "Strong year last year, will be good under Penix\n"
         ],
         "9494": [
             "Like",
@@ -102,10 +100,6 @@
         "6938": [
             "Like",
             "Could be up after Kamara"
-        ],
-        "7594": [
-            "Like",
-            "Player liked"
         ],
         "12527": [
             "Like",
@@ -178,6 +172,18 @@
         "11652": [
             "Like",
             "Player liked"
+        ],
+        "12526": [
+            "Like",
+            "Rookie WR on CAR, likely WR1 over Legette\n"
+        ],
+        "12518": [
+            "Like",
+            "Rookie TE on IND, likely their TE1, HC has strong history of TE production\n"
+        ],
+        "8138": [
+            "Like",
+            "I like James Cook. I think he's gonna have a strong year. I should draft him!\n"
         ]
     }
 }
