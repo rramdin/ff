@@ -1,4 +1,4 @@
-#!/Library/Frameworks/Python.framework/Versions/Current/bin/python3
+#!/Users/rramdin/ff/venv/bin/python
 import bs4
 from dataclasses import dataclass, field
 from enum import Enum
@@ -47,7 +47,8 @@ LEAGUE_ID = "1180175940712742912"
 MY_USER_ID = "1121497299739418624"
 
 DRAFT_ID = "1252809670700048384"
-# DRAFT_ID = None
+DRAFT_ID = "1255041582684454912"
+DRAFT_ID = None
 
 REFRESH_RATE = 15  # seconds
 
@@ -249,7 +250,7 @@ class Player:
             prefix = ""
 
         if self.actual_cost:
-            actual_cost = " Actual: ${self.actual_cost}"
+            actual_cost = f" Actual: ${self.actual_cost}"
         else:
             actual_cost = ""
 
@@ -322,7 +323,7 @@ class Player:
         status = f"[bold {status_color}]{self.status}[/bold {status_color}]"
 
         injury_risk = (f"Injury: {self.injury_risk}"
-                       f" -  Career: {self.career_injuries}"
+                       f" - Career: {self.career_injuries}"
                        f" Risk/Season: {self.injury_risk_per_season*100:.2f}%"
                        f" Proj Missed: {self.projected_games_missed:.1f}")
         if "High" in self.injury_risk:
@@ -430,10 +431,12 @@ class FantasyTeam:
             player.fantasy_team.remove_player(player)
         self.players.append(player)
         player.fantasy_team = self
+        self.calc_score()
 
     def remove_player(self, player):
         self.players.remove(player)
         player.fantasy_team = None
+        self.calc_score()
 
     def calc_score(self):
         self.score = 0.0
@@ -812,7 +815,7 @@ def load_injury_predictions(players):
                 logging.info("Could not look up player for injury: %s", name)
                 continue
             p.career_injuries = int(r['career_injuries'])
-            p.injury_risk = r['injury_risk']
+            p.injury_risk = r['injury_risk'].strip()
             p.injury_risk_per_season = float(r['injury_risk_per_season'].replace("%",""))/100
             p.durability = float(r['durability'])
             p.projected_games_missed = float(r['projected_games_missed'])
@@ -882,6 +885,7 @@ class Draft:
             if fantasy_team is not None:
                 fantasy_team.add_player(player)
 
+        player.actual_cost = amount
         if self.initial_load:
             print(f"{fantasy_team.namec} drafted {player.name} for ${amount}")
         else:
