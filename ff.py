@@ -76,6 +76,7 @@ OL_FILE = "data/2025_ol_rankings.txt"
 DEF_FILE = "data/2025_defense_rankings.txt"
 KEEPERS_FILE = "data/2024_keeper_costs.json"
 INJURIES_FILE = "data/2025_draft_shark_injury_predictions.csv"
+ROUTES_RUN_FILE = "data/2024_first_down_per_route_run.csv"
 
 COMBOS_MAX_WEEK = 13
 COMBOS_NUM_GAMES = 10
@@ -97,7 +98,7 @@ class Matchup:
 
     def get_favor(self):
         if self.favor >= 4:
-            return MULTIPLIER_ADVANTAGE
+            return MULTIPLER_ADVANTAGE
         elif self.favor == 3:
             return MULTIPLIER_TOSSUP
         elif self.favor == 2:
@@ -182,6 +183,10 @@ class Player:
     weeks: list[Matchup] = field(default_factory=list)
     week_fppgs: WeekFPPGs = field(default_factory=WeekFPPGs)
 
+    routes_run = 0
+    first_downs_per_route_run = 0.0
+    first_downs_per_route_run_rank = 0
+
     def __hash__(self):
         return hash(self.sleeper_id)
 
@@ -227,7 +232,7 @@ class Player:
         if self.team:
             oldef = f" OL{self.team.ol_ranking} DEF{self.team.def_ranking}"
             team_info  = (f"{self.team.emoji}"
-                          f" {self.team.name if unf else self.team.namec}"
+                          f"  {self.team.name if unf else self.team.namec}"
                           f" {self.depth_chart_position}{self.depth_chart_order}")
         else:
             oldef = ""
@@ -336,6 +341,11 @@ class Player:
             inj_color = "green"
         injury_risk = f"[{inj_color}]{injury_risk}[/{inj_color}]"
 
+        fdprr = ""
+        if self.routes_run:
+            fdprr = (f"    Routes Run: {self.routes_run}"
+                     f" First Downs/Route: {self.first_downs_per_route_run}"
+                     f" Rank: {self.first_downs_per_route_run_rank}\n")
 
         return (f"------ {self.name} ({self.team if self.team else "[grey]Free Agent[/grey]"} #{self.number}) ------\n"
         f"    {self.tostr()}\n"
@@ -350,6 +360,7 @@ class Player:
         f"    {injury_risk}\n"
         f"    sleeper: {self.sleeper_id} owner: {self.fantasy_team.namec if self.fantasy_team else 'None'}"
                 f"{' OVERRIDE' if self.is_override else ''}\n"
+                f"{fdprr}"
 #        f"    https://fantasydata.com/nfl/{short_name}-fantasy/{self.fantasy_data_id}/\n"
         f"    https://www.rotowire.com/football/player/{short_name}-{self.rotowire_id}\n"
 #        f"    https://www.fubo.tv/welcome/athlete/{self.sportradar_id}/"
@@ -804,7 +815,7 @@ def load_keeper_costs(players):
                 continue
             player.keeper_cost = cost
 
-def load_injury_predictions(players):
+def load_extra(players):
     with open(INJURIES_FILE, "r") as f:
         reader = csv.DictReader(f)
         for r in track(reader, description="Loading injury predictions", total=200):
@@ -819,6 +830,19 @@ def load_injury_predictions(players):
             p.injury_risk_per_season = float(r['injury_risk_per_season'].replace("%",""))/100
             p.durability = float(r['durability'])
             p.projected_games_missed = float(r['projected_games_missed'])
+    with open(ROUTES_RUN_FILE, "r") as f:
+        reader = csv.DictReader(f)
+        for r in track(reader, description="Loading first downs/route stats", total=50):
+            p = players.find(r["name"])
+            if not p:
+                logging.warning("Could not lookup player for '%s'",
+                                r["name"])
+                continue
+            p.routes_run = r['routes']
+            p.first_downs_per_route_run = r['first_downs_per_route_run']
+            p.first_downs_per_route_run_rank = r['rank']
+
+
 
 def download_file(url, filename):
     try:
@@ -1075,6 +1099,43 @@ def print_players():
     with draft.lock:
         for p in sorted(players.sleeper.values(), key = lambda p: p.adj_projection()):
             print(p.tostr())
+
+def print_keeper_costs():
+    with draft.lock:
+        for ft in fantasy_teams.values():
+            to_print = [p for p in ft.players if p.keeper_cost > 0]
+            to_print.sort(key = lambda p: p.keeper_cost)
+            print(ft.name)
+            print("-" * len(ft.name))
+            for p in to_print:
+                print(f"{p.name:25s} | ${p.keeper_cost}")
+            print()
+
+def print_prospects():
+    with draft.lock:
+        pros = []
+
+        for sleeper_id in local_state.notes:
+            p = players.sleeper.get(sleeper_id)
+            if not p:
+                logging.error(f"Unknonw player in notes: {sleeper_id}")
+                continue
+            if p.fantasy_team:
+                continue
+            pros.append(p)
+
+        pros.sort(key=lambda p: p.rank)
+
+        print()
+        for p in pros:
+            a, n = local_state.notes.get(p.sleeper_id)
+            if a not in ("Like", "Love"):
+                continue
+            print()
+            print(p.tostr())
+            print("    ", n.strip())
+
+
 
 def do_combos(players, pos, num_draft, num_play):
     by_position = by_pos(players)
@@ -1413,6 +1474,7 @@ def handle_input(prompts, c):
     print()
     for p in prompts:
         if c == p[0]:
+            print(p[1])
             return p[2]
     return lambda: False
 
@@ -1467,7 +1529,7 @@ def main():
     load_draft_values(players)
     load_ol_def_rankings(players)
     load_keeper_costs(players)
-    load_injury_predictions(players)
+    load_extra(players)
 
     if args.refresh:
         refresh_rosters()
@@ -1489,7 +1551,9 @@ def main():
         ("v", "Print players", print_players),
         ("d", "Draft combo", input_combos),
         ("t", "Print teams", print_rosters),
+        ("k", "Print keeper costs", print_keeper_costs),
         ("x", "Refresh draft", refresh_draft),
+        ("P", "Print remaining prospects", print_prospects),
         ("a", "Analyze", draft_analyze),
         ("D", "Debug", breakpoint),
         ("q", "Quit", lambda: sys.exit(0)),
