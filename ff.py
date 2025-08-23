@@ -1119,7 +1119,7 @@ def print_combos(combos):
     NUM_PRINT = 500
 
     rank = min(len(combos), NUM_PRINT)
-    for players, score, play in combos[-NUM_PRINT:]:
+    for players, score, play in reversed(combos[-NUM_PRINT:]):
         pstr = " - ".join([p.tostr() for p in players])
         rstr = f"#{rank}/{len(combos)} - {score/18:.2f} - "
         pad = len(rstr) * " "
@@ -1399,7 +1399,7 @@ def draft_analyze(verbose=True):
     print("Needed:", ','.join([f"{p}: {n}" for p, n in needed.items()]))
 
     combos = []
-    to_print = collections.defaultdict(set)
+    to_print = collections.defaultdict(list)
     for pos, n in needed.items():
         if n < 0:
             print(f"Drafted too many {pos}s, should reconfigure draft settings")
@@ -1424,7 +1424,8 @@ def draft_analyze(verbose=True):
                 if p.sleeper_id in to_print[pos]:
                     continue
                 combos.append(c)
-                to_print[pos].add(p.sleeper_id)
+                if p.sleeper_id not in to_print[pos]:
+                    to_print[pos].append(p.sleeper_id)
                 i += 1
                 if i >= num_print:
                     break
