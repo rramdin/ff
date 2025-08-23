@@ -38,4 +38,9 @@ def load_injury_predictions():
             durability = r['durability']
             projected_games_missed = r['projected_games_missed']
 
-load_injury_predictions()
+#load_injury_predictions()
+
+import questionary
+
+questionary.rawselect("which items",
+                   choices=["one", "two", "three"]).ask() # , use_shortcuts=True).ask()

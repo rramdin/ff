@@ -19,6 +19,7 @@ import urllib.request
 import texteditor
 import textwrap
 import math
+import getpass
 
 from sleeper_wrapper import League, Players
 from functools import cache
@@ -29,62 +30,113 @@ from rich.highlighter import Highlighter
 from rich.panel import Panel
 
 VERBOSE = False
-MAX_AGE = 100
 
 # Whether to use pre-draft rosters or just keepers
 PRE_DRAFT = True
 
-MULTIPLIER_ADVANTAGE = 1.5
-MULTIPLIER_TOSSUP = 1.0
-MULTIPLIER_DISADVANTAGE = 0.9
-MULTIPLIER_BAD = 0.5
-MULTIPLIER_BYE = 0.0
+# Local state store notes and liked/disliked players. The editor is selected
+# based on the EDITOR environment variable.
 local_state = []
 
-PREV_DRAFT_ID = "1137540557221294080"
-PREV_LEAGUE_ID = "1121477093499543552"
-LEAGUE_ID = "1180175940712742912"
-MY_USER_ID = "1121497299739418624"
-
-DRAFT_ID = "1252809670700048384"
-DRAFT_ID = "1255041582684454912"
-DRAFT_ID = None
-
+# During the draft, how often to poll for draft updates. Rate-limit to avoid
+# overwhelming the sleeper API. When --refresh is specified, we start a second
+# thread to periodically update results. When players are drafted, some info is
+# printed.
 REFRESH_RATE = 15  # seconds
 
-NUM_RECOMMEND = 4
-
-# 16 players
-# 1 DEF, 1 K
-DRAFT_SETTINGS = {
-"QB": [1, 2],
-"RB": [3, 6],
-"WR": [2, 4],
-"TE": [1, 2],
-}
-
+# Files downloaded from sleeper when --refresh is specified
 PICKS_FILE = "data/picks.json"
 DRAFT_FILE = "data/draft.json"
 ROSTERS_FILE = "data/rosters.json"
 USERS_FILE = "data/users.json"
 MATCHUPS_FILE = "data/2025_matchups.json"
 PLAYERS_FILE = "data/nfl_players.json"
-STATE_FILE = "data/local_state.json"
+
+# Rotowire PPG projections
 PROJECTIONS_FILE = "data/rotowire-projections.csv"
+
+# Fantasy pros auction values based on 12 team, half PPR
+# https://www.fantasypros.com/nfl/auction-values/calculator.php
 DRAFT_VALUE_FILE = "data/draft_values_2025.txt"
+
+# Offensive line and defense rankings.
 OL_FILE = "data/2025_ol_rankings.txt"
 DEF_FILE = "data/2025_defense_rankings.txt"
-KEEPERS_FILE = "data/2024_keeper_costs.json"
+
+# Injury predictions
 INJURIES_FILE = "data/2025_draft_shark_injury_predictions.csv"
+
+# For loading first downs per route run
 ROUTES_RUN_FILE = "data/2024_first_down_per_route_run.csv"
 
+# COMBOS -- Moneyball!
+#
+# Can we make better player based on strength of schedule. The biggest bias
+# here is the Bye-week, so this is a good way of finding WR3/4/5 that goes with
+# your WR1 and WR2. Obviously drafting Chase and JJ is the best combo of WRs,
+# but in later rounds of the draft, this can give insights of who might be
+# advantageous to draft.
+#
+# In this analysis, we only measure the first COMBOS_MAX_WEEK, this could be
+# set to the length of the regular season or to include the playoffs. We also
+# only count COMBOS_NUM_GAMES, discarding the worst weeks, because we are
+# trying to win games, not maximize points-per-season -- i.e. explosiveness is
+# a little better than consistency.
+#
+# DRAFT_SETTINGS is your goal roster, e.g. QB [1,2] means you want to roster 2
+# QBs and start 1 each week. Current rosters are considered, so if you've
+# already drafted 2 wide receivers, only combos containing them are considered.
+#
+# Finally, if a --max-age is specified or MAX_AGE is set below, players over
+# that age will not be included in Combos. Who wants a 32 year old WR4?
+#
+# When analyzing strength-of-schedule (SOS):
+# - We have projected points per game (PPG)
+# - We have weekly matchup strength in 1-5 "stars" from FantasyPros
+# We take the forecasted total points for the season, and assume
+# PERCENTAGE_POINTS_VAR varies by week. We take the total variable
+# portion and divide it by the player's total stars, and give that
+# many points per star to each game to get their per-game forecast.
+PERCENTAGE_POINTS_VAR = 0.3
+NUM_RECOMMEND = 4
 COMBOS_MAX_WEEK = 13
 COMBOS_NUM_GAMES = 10
+# 16 players; 1 DEF, 1 K
+DRAFT_SETTINGS = {
+"QB": [1, 2],
+"RB": [3, 6],
+"WR": [2, 4],
+"TE": [1, 2],
+}
+MAX_AGE = 100
 
-PERCENTAGE_POINTS_VAR = 0.3
+CONFIG_NAME = f"{getpass.getuser()}"
+try:
+    CONFIG = __import__(CONFIG_NAME)
+except:
+    logging.error("Create a file at %s.py with sleeper"
+                  " LEAGUE_ID and MY_USER_ID", CONFIG_NAME)
+    logging.error("Go to https://sleeper.com/")
+    logging.error("Go to your league, your league ID is in the URL")
+    logging.error("Go to https://api.sleeper.app/v1/user/<user_id>"
+                  " and find user_id or use get_sleeper_user.py")
+    sys.exit(1)
 
-NUM_ACTIVE_PLAYERS = 0
+def load_config():
+    def get(s, default=None):
+        global CONFIG
+        if hasattr(CONFIG, s):
+            return getattr(CONFIG, s)
+        return default
+    global STATE_FILE, LEAGUE_ID, MY_USER_ID, DRAFT_ID, KEEPERS_FILE
+    STATE_FILE = get("STATE_FILE",
+                     f"data/local_state_{getpass.getuser()}.json")
+    LEAGUE_ID = get("LEAGUE_ID")
+    MY_USER_ID = get("MY_USER_ID")
+    DRAFT_ID = get("DRAFT_ID")
+    KEEPERS_FILE = get("KEEPERS_FILE")
 
+load_config()
 
 class Matchup:
     def __init__(self, arr):
@@ -95,18 +147,6 @@ class Matchup:
         else:
             self.opponent = arr[1].replace("@", "").strip()
             self.favor = int(arr[2])
-
-    def get_favor(self):
-        if self.favor >= 4:
-            return MULTIPLER_ADVANTAGE
-        elif self.favor == 3:
-            return MULTIPLIER_TOSSUP
-        elif self.favor == 2:
-            return MULTIPLIER_DISADVANTAGE
-        elif self.favor == 1:
-            return MULTIPLIER_BAD
-        else:
-            return MULTIPLIER_BYE
 
     def __str__(self):
         if self.is_bye:
@@ -259,10 +299,15 @@ class Player:
         else:
             actual_cost = ""
 
+        if self.keeper_cost:
+            keeper_cost = f" K: ${self.keeper_cost}"
+        else:
+            keeper_cost = ""
+
         return (f"{prefix }{self.name.unf if unf else self.name}"
                 f" ({self.position}{self.positional_rank}) {team_info}"
                 f" spg: {self.adj_projection()/18:.2f}{oldef} {t}"
-                f" K: ${self.keeper_cost}"
+                f"{keeper_cost}"
                 f" Val: ${self.draft_value}{actual_cost}")
 
     def last_name(self):
@@ -497,7 +542,6 @@ def load_2025_matchups(players):
     return players
 
 def load_sleeper():
-    global NUM_ACTIVE_PLAYERS
     position_mapping = {
         "QB": "QB",
         "FB": "RB",
@@ -518,7 +562,6 @@ def load_sleeper():
                          'LOLB', 'LDE', 'LT', 'LEO', 'LS', 'RWR', 'LDT', 'DL',
                          'WR', 'DB', 'LB', 'LG', 'SWR', 'OT', 'RG', 'DT',
                          'RDT', 'WS', 'OG', 'RB', 'DEF'])
-    NUM_ACTIVE_PLAYERS = 0
     with open(PLAYERS_FILE, "r") as f:
         j = json.loads(f.read())
         for idnum, info in track(j.items(), description="Loading players"):
@@ -550,9 +593,6 @@ def load_sleeper():
             p.experience = info.get('years_exp', None)
             p.number = info.get('number', 0)
             p.status = info.get('status', 'UNK')
-
-            if p.status == "Active":
-                NUM_ACTIVE_PLAYERS += 1
 
             height = info.get('height', '')
             if height:
@@ -806,6 +846,8 @@ def load_ol_def_rankings(players):
                 logger.warning("No Defense ranking for team", team.name)
 
 def load_keeper_costs(players):
+    if not KEEPERS_FILE:
+        return
     with open(KEEPERS_FILE, "r") as f:
         j = json.loads(f.read())
         for player_id, cost in track(j.items(), "Loading keeper costs"):
@@ -835,7 +877,7 @@ def load_extra(players):
         for r in track(reader, description="Loading first downs/route stats", total=50):
             p = players.find(r["name"])
             if not p:
-                logging.warning("Could not lookup player for '%s'",
+                logging.warning("Could not lookup player for routes run for '%s'",
                                 r["name"])
                 continue
             p.routes_run = r['routes']
