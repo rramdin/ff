@@ -27,7 +27,7 @@ python ff.py
 
 # Some basics
 You must create a config file at `<user>.py` where sleeper LEAGUE_ID and
-USER_ID are specified.
+MY_USER_ID are specified. The program gives instructions if these are missing.
 
 When the program starts up, you're presented with some options, which can be
 selected by pressing the letter indicated. `q` goes back a level or quits the
@@ -39,3 +39,5 @@ players list. If a DRAFT_ID is specified in your config file and PRE_DRAFT mode
 is set to True, it will start a thread that polls your draft to keep rosters
 up-to-date as players are drafted. When not in PRE_DRAFT mode, rosters are
 loaded once at the start of the program.
+
+There is a moneyball style analyzer which is described in comments in ff.py.
