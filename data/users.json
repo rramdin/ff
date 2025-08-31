@@ -1,6 +1,6 @@
 [
     {
-        "avatar": "e7af4deab0289b4f5505646424895246",
+        "avatar": "d55d1f7075eda01948318de4af616075",
         "display_name": "lou732",
         "is_bot": false,
         "is_owner": false,
@@ -29,7 +29,7 @@
             "mention_pn": "on",
             "player_like_pn": "on",
             "player_nickname_update": "on",
-            "team_name": "Likely to Puka Olave You",
+            "team_name": "Gender Fluid Penix",
             "team_name_update": "on",
             "trade_block_pn": "on",
             "transaction_commissioner": "off",
@@ -42,14 +42,14 @@
         "user_id": "1000121082298400768"
     },
     {
-        "avatar": "15d7cf259bc30eab8f6120f45f652fb6",
+        "avatar": "eb60e7fce3d530f675ca8da7be0aca9f",
         "display_name": "dtfahy",
         "is_bot": false,
         "is_owner": true,
         "league_id": "1180175940712742912",
         "metadata": {
             "allow_pn": "on",
-            "avatar": "https://sleepercdn.com/uploads/d57e648c2900e85d47dbf339439b81da.jpg",
+            "avatar": "https://sleepercdn.com/uploads/8f666c78d90bd488da467b726c78b77e.jpg",
             "league_report_pn": "off",
             "mascot_message": "off",
             "mention_pn": "on",
@@ -94,7 +94,7 @@
         "user_id": "1121496651656470528"
     },
     {
-        "avatar": "98f17952d4e6e042169974c5a65caca4",
+        "avatar": "a9571127df28a525af31f01eb0dd7f53",
         "display_name": "rramdin",
         "is_bot": false,
         "is_owner": false,
@@ -137,7 +137,7 @@
         "user_id": "1121657803124416512"
     },
     {
-        "avatar": "97fb4afdc59b2ee4d8fb51179c694781",
+        "avatar": "2962f96ae2966662ecd23fd70ddcae80",
         "display_name": "showtimes524",
         "is_bot": false,
         "is_owner": false,
@@ -145,8 +145,9 @@
         "metadata": {
             "allow_pn": "on",
             "allow_sms": "on",
+            "avatar": "https://sleepercdn.com/uploads/f2716b76e8021da3ced3525809fce685.jpg",
             "mention_pn": "on",
-            "team_name": "Uncle Ricos Bastard"
+            "team_name": "Uncle Ricos Bastards"
         },
         "settings": null,
         "user_id": "1122261683939926016"
@@ -230,5 +231,19 @@
         },
         "settings": null,
         "user_id": "1125142477238927360"
+    },
+    {
+        "avatar": "d55d1f7075eda01948318de4af616075",
+        "display_name": "DammitGelb",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1180175940712742912",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on",
+            "team_name": "Gelb\u2019s Forgotten Sons"
+        },
+        "settings": null,
+        "user_id": "1251026910742319104"
     }
 ]

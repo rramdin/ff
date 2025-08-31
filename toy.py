@@ -42,5 +42,20 @@ def load_injury_predictions():
 
 import questionary
 
-questionary.rawselect("which items",
-                   choices=["one", "two", "three"]).ask() # , use_shortcuts=True).ask()
+# questionary.rawselect("which items",
+#                    choices=["one", "two", "three"]).ask() # , use_shortcuts=True).ask()
+
+DRAFT_SHARKS_FILE = "data/2025_predraft_ds_osb.csv"
+def load_draft_sharks(players):
+    with open(DRAFT_SHARKS_FILE, "r") as f:
+        reader = csv.DictReader(f, quotechar='"')
+        for r in reader:
+            print(r)
+            print(r["Player"])
+            print(float(r["ADP"]))
+            print(int(float(r["Overall Tier"])))
+            print(int(float(r["Pos. Tier"])))
+            print(float(r["DS Proj"]))
+            print(float(r["Auction $"].replace("$","")))
+
+load_draft_sharks(None)

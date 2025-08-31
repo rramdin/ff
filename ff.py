@@ -28,6 +28,10 @@ from rich import print
 from rich.progress import track
 from rich.highlighter import Highlighter
 from rich.panel import Panel
+from rich.table import Table
+from rich.console import Console
+
+
 
 VERBOSE = False
 
@@ -58,6 +62,14 @@ PROJECTIONS_FILE = "data/rotowire-projections.csv"
 # Fantasy pros auction values based on 12 team, half PPR
 # https://www.fantasypros.com/nfl/auction-values/calculator.php
 DRAFT_VALUE_FILE = "data/draft_values_2025.txt"
+
+# Draft sharks auction values
+# https://www.draftsharks.com/league/draft/board/mvp?id=781007
+DRAFT_VALUE_FILE = "data/2025_predraft_ds_osb.csv"
+DRAFT_VALUE_FILE_GEN = "data/2025-draft-sharks-auction-values-half-ppr.csv"
+
+# Sleeper projections
+SLEEPER_PROJECTIONS_FILE = "data/2025_sleeper_auction_proj.csv"
 
 # Offensive line and defense rankings.
 OL_FILE = "data/2025_ol_rankings.txt"
@@ -109,6 +121,10 @@ DRAFT_SETTINGS = {
 "TE": [1, 2],
 }
 MAX_AGE = 100
+
+OVERALL_TIER = "Overall"
+TOP_TIERS = "TOP"
+ALL_TIERS = "ALL"
 
 CONFIG_NAME = f"{getpass.getuser()}"
 try:
@@ -209,8 +225,16 @@ class Player:
     keeper_cost = 0
     draft_value = 0
     actual_cost = 0
+    actual_draft_pos = None
     fantasy_team = None
     is_override = False
+
+    adp = 1000.0
+    overall_tier = 15.0
+    pos_tier = 15.0
+    is_keeper = False
+    sleeper_auction_value = 0.0
+    ds_note = None
 
     team:Team = None
 
@@ -263,7 +287,7 @@ class Player:
     def taken(self):
         return self.fantasy_team and self.fantasy_team.id != MY_USER_ID
 
-    def tostr(self, unf=False):
+    def tostr(self, unf=False, emoji=True, notes=True):
         t = 'N'
         if self.taken:
             t = 'T'
@@ -271,26 +295,40 @@ class Player:
             t = 'P'
         if self.team:
             oldef = f" OL{self.team.ol_ranking} DEF{self.team.def_ranking}"
-            team_info  = (f"{self.team.emoji}"
-                          f"  {self.team.name if unf else self.team.namec}"
+            if emoji:
+                emoji_str = f"{self.team.emoji}  "
+            else:
+                emoji_str = ""
+
+            team_info  = (f"{emoji_str}"
+                          f"{self.team.name if unf else self.team.namec}"
                           f" {self.depth_chart_position}{self.depth_chart_order}")
         else:
             oldef = ""
             team_info = "Free Agent"
 
-        if self.sleeper_id in local_state.notes:
-              note = local_state.notes[self.sleeper_id]
-              if not note[0]:
-                  color = "#d70000"
-                  prefix = "[Dislike] "
-              elif note[0] == "Love":
-                  color = "#5f00ff"
-                  prefix = "[Draft] "
-              else:
-                  color = "#5fd700"
-                  prefix = f"[{note[0]}] "
-              if not unf:
-                  prefix = f"[bold {color}]{prefix}[/bold {color}]"
+        if notes:
+            if self.sleeper_id in local_state.notes:
+                  note = local_state.notes[self.sleeper_id]
+                  if not note[0]:
+                      color = "#d70000"
+                      prefix = "[Dislike] "
+                  elif note[0] == "Love":
+                      color = "#5f00ff"
+                      prefix = "[Draft] "
+                  else:
+                      color = "#5fd700"
+                      prefix = f"[{note[0]}] "
+                  if not unf:
+                      prefix = f"[bold {color}]{prefix}[/bold {color}]"
+            else:
+                prefix = ""
+
+            if self.ds_note:
+                note = f"[{self.ds_note}] "
+                if not unf:
+                    color = "#FC6A03"
+                    prefix += f"[bold {color}]{note}[/bold {color}]"
         else:
             prefix = ""
 
@@ -299,14 +337,15 @@ class Player:
         else:
             actual_cost = ""
 
-        if self.keeper_cost:
+        if not DRAFT_ID and self.keeper_cost:
             keeper_cost = f" K: ${self.keeper_cost}"
         else:
             keeper_cost = ""
 
         return (f"{prefix }{self.name.unf if unf else self.name}"
                 f" ({self.position}{self.positional_rank}) {team_info}"
-                f" spg: {self.adj_projection()/18:.2f}{oldef} {t}"
+                f" spg: {self.adj_projection()/18:.2f}{oldef}"
+                f" ADP: {self.adp}"
                 f"{keeper_cost}"
                 f" Val: ${self.draft_value}{actual_cost}")
 
@@ -393,10 +432,12 @@ class Player:
                      f" Rank: {self.first_downs_per_route_run_rank}\n")
 
         return (f"------ {self.name} ({self.team if self.team else "[grey]Free Agent[/grey]"} #{self.number}) ------\n"
-        f"    {self.tostr()}\n"
+        f"    {self.tostr(notes=False)}\n"
         f"    {self.position}{self.positional_rank} Overall: {self.rank}"
                 f" Status: {status}"
-                f" Season: {exp}\n"
+                f" Season: {exp}"
+                f" Tier: {self.overall_tier}"
+                f" Pos Tier: {self.pos_tier}\n"
         f"    Age: {self.age} Ht: {height_feet}'{height_inches}\""
                 f" Wt: {self.weight} lbs\n"
         f"    {'  '.join(['%.1f' % self.week_fppg(i) for i in range(9)])}\n"
@@ -561,7 +602,7 @@ def load_sleeper():
                          'NT', 'LILB', 'K/P', 'RT', 'ROLB', 'LWR', 'LCB', 'K',
                          'LOLB', 'LDE', 'LT', 'LEO', 'LS', 'RWR', 'LDT', 'DL',
                          'WR', 'DB', 'LB', 'LG', 'SWR', 'OT', 'RG', 'DT',
-                         'RDT', 'WS', 'OG', 'RB', 'DEF'])
+                         'RDT', 'WS', 'OG', 'RB', 'DEF', 'PR'])
     with open(PLAYERS_FILE, "r") as f:
         j = json.loads(f.read())
         for idnum, info in track(j.items(), description="Loading players"):
@@ -723,19 +764,31 @@ def load_sleeper():
             teams[team.long_name] = team
         p.team = team
 
+    with open(SLEEPER_PROJECTIONS_FILE, "r") as f:
+        reader = csv.DictReader(f)
+        for r in reader:
+            name = r['player']
+            if name in teams:
+                continue
+            p = players.find(name)
+            if not p:
+                logging.error("Could not find %s", name)
+                continue
+            p.sleeper_auction_value = int(r['cost'].replace('$', ''))
+
 
 def load_league(players):
     global local_state, fantasy_team_roster_id
     with draft.lock:
+        for p in players.sleeper.values():
+            p.fantasy_team = None
+
         with open(USERS_FILE, "r") as f:
             for j in track(json.loads(f.read()), "Loading league"):
                 team_name = j.get("display_name")
                 fantasy_team = FantasyTeam(team_name, j.get("user_id"))
                 fantasy_teams[fantasy_team.id] = fantasy_team
                 fantasy_team_names[fantasy_team.name] = fantasy_team
-
-        for p in players.sleeper.values():
-            p.fantasy_team = None
 
         fantasy_team_roster_id = {}
         with open(ROSTERS_FILE, "r") as f:
@@ -744,6 +797,8 @@ def load_league(players):
                 user_id = r.get('owner_id', "0")
                 fantasy_team = fantasy_teams.get(r['owner_id'], UNKNOWN_TEAM)
                 fantasy_team_roster_id[int(r['roster_id'])] = fantasy_team
+                for cowner_id in r.get('co_owners') or []:
+                    fantasy_teams[cowner_id] = fantasy_team
 
                 if DRAFT_ID:
                     continue
@@ -756,6 +811,10 @@ def load_league(players):
                             if p.fantasy_team != fantasy_team:
                                 print(f"Adding player {p.name} to team {fantasy_team.namec} ({fantasy_team.id})")
                                 fantasy_team.add_player(p)
+                                if field == "keepers":
+                                    p.is_keeper = True
+                                    p.actual_cost = int(float(p.keeper_cost))
+                                    p.actual_draft_pos = 0
                         else:
                             logging.info(f"Player {ps} not found in players")
                     except ValueError:
@@ -766,12 +825,54 @@ def load_league(players):
 
     draft.reapply_all()
 
-    for team in fantasy_teams.values():
+    for team in fantasy_team_roster_id.values():
         team.calc_score()
 
     return players
 
 def load_draft_values(players):
+    with open(DRAFT_VALUE_FILE, "r") as f:
+        reader = csv.DictReader(f, quotechar='"')
+        for r in reader:
+            name = r["Player"]
+            for suffix in [' Jr.', ' Sr.', ' III', ' II']:
+                if name.endswith(suffix):
+                    name = name[:-len(suffix)].strip()
+            if name in teams:
+                continue
+            p = players.find(name)
+            if not p:
+                logging.info("Could not lookup %s", name)
+                continue
+
+            p.draft_value = int(float(r["Auction $"].replace("$","")))
+            p.projection = float(r["DS Proj"])
+            p.adp = float(r["ADP"])
+            p.overall_tier = int(float(r["Overall Tier"]))
+            p.pos_tier = int(float(r["Pos. Tier"]))
+            p.ds_note = r["Note"]
+
+
+def load_draft_values_gen(players):
+    with open(DRAFT_VALUE_FILE_GEN, "r") as f:
+        reader = csv.DictReader(f, quotechar='"')
+        for r in reader:
+            name = r["Player"]
+            for suffix in [' Jr.', ' Sr.', ' III', ' II']:
+                if name.endswith(suffix):
+                    name = name[:-len(suffix)].strip()
+            if name in teams:
+                continue
+            p = players.find(name)
+            if not p:
+                logging.error("Could not lookup %s", name)
+                continue
+
+            p.draft_value = int(float(r["DS AuctionValue"].replace("$","")))
+            p.projection = float(r["DS Proj"])
+
+
+def load_draft_values_old(players):
     #   1.  Ja'Marr Chase (CIN - WR)  $62
     with open(DRAFT_VALUE_FILE, "r") as f:
         for line in track(f, "Loading draft values", total=150):
@@ -951,7 +1052,8 @@ class Draft:
             if fantasy_team is not None:
                 fantasy_team.add_player(player)
 
-        player.actual_cost = amount
+        player.actual_cost = int(float(amount))
+        player.actual_draft_pos = max(pick_no-24, 0)
         if self.initial_load:
             print(f"{fantasy_team.namec} drafted {player.name} for ${amount}")
         else:
@@ -966,6 +1068,8 @@ class Draft:
 
         if not self.initial_load:
             draft_analyze(verbose=False)
+            print_tier_info(OVERALL_TIER, player.overall_tier)
+            print_tier_info(player.position, player.pos_tier)
 
     def load(self):
         if os.path.exists(DRAFT_FILE):
@@ -1002,7 +1106,7 @@ class Draft:
                 self.apply(*info)
                 added += 1
                 if self.is_sim:
-                    target = 24 if self.initial_load else 1
+                    target = 20 if self.initial_load else 1
                     if added >= target:
                         break
         self.initial_load = False
@@ -1012,7 +1116,7 @@ draft = Draft()
 def refresh_draft():
     draft.refresh()
 
-def load_projections(players):
+def load_projections_old(players):
     with open(PROJECTIONS_FILE, "r", encoding="utf-8-sig") as f:
         reader = csv.reader(f, quotechar='"')
         header1 = next(reader)
@@ -1119,13 +1223,13 @@ def print_combos(combos):
     NUM_PRINT = 500
 
     rank = min(len(combos), NUM_PRINT)
-    for players, score, play in reversed(combos[-NUM_PRINT:]):
-        pstr = " - ".join([p.tostr() for p in players])
+    for players, score, play in combos[-NUM_PRINT:]:
+        pstr = " - ".join([p.tostr(notes=False) for p in players])
         rstr = f"#{rank}/{len(combos)} - {score/18:.2f} - "
         pad = len(rstr) * " "
-        print(f"{rstr} {players[0].tostr()}")
+        print(f"{rstr} {players[0].tostr(notes=False)}")
         for i in range(1, len(players)):
-            print(f"{pad} {players[i].tostr()}")
+            print(f"{pad} {players[i].tostr(notes=False)}")
         rank -= 1
         # for i in range(len(play)):
         #     print(f"Week{i+1}: ", ", ".join([p.last_name() for p in play[i]]))
@@ -1144,7 +1248,7 @@ def print_players():
 
 def print_keeper_costs():
     with draft.lock:
-        for ft in fantasy_teams.values():
+        for ft in fantasy_team_roster_id.values():
             to_print = [p for p in ft.players if p.keeper_cost > 0]
             to_print.sort(key = lambda p: p.keeper_cost)
             print(ft.name)
@@ -1169,7 +1273,7 @@ def print_prospects():
         pros.sort(key=lambda p: p.rank)
 
         print()
-        for p in pros:
+        for p in reversed(pros):
             a, n = local_state.notes.get(p.sleeper_id)
             if a not in ("Like", "Love"):
                 continue
@@ -1206,7 +1310,7 @@ def print_roster():
             print(f"Avg Age: {total_age/len(mine):2f}")
         print()
         for p in mine:
-            print(p.tostr())
+            print(p.tostr(notes=False))
 
 def refresh_rosters():
     league = League(LEAGUE_ID)
@@ -1316,27 +1420,8 @@ class LocalState:
             player.is_override = False
             self.save()
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description="analyze", formatter_class=argparse.RawTextHelpFormatter
-    )
-    parser.add_argument('-r', '--roster', dest='roster', action="store_true")
-    parser.add_argument('-q', '--query', dest='query', nargs='+')
-    parser.add_argument('-p', '--pos', dest="pos")
-    parser.add_argument('-d', '--draft', dest="num_draft", type=int, default=1)
-    parser.add_argument('-l', '--play', dest="num_play", type=int, default=1)
-    parser.add_argument('-s', '--sim', dest="sim", action="store_true")
-    parser.add_argument('-v', '--verbose', dest="verbose", action="store_true")
-    parser.add_argument('--max-age', dest="max_age", type=int, default=100)
-    parser.add_argument('--refresh', dest="refresh", action="store_true")
-    global VERBOSE, MAX_AGE
-    args = parser.parse_args()
-    VERBOSE = args.verbose
-    MAX_AGE = args.max_age
-    return args
-
 def prompt_set_team(player):
-    teams = [t for t in fantasy_teams.values()]
+    teams = [t for t in fantasy_team_roster_id.values()]
     prompts = []
     def set_team(team):
         team.add_player(player)
@@ -1432,12 +1517,161 @@ def draft_analyze(verbose=True):
             if i >= num_print:
                 break
     if verbose:
-        print_combos(combos)
+        print_combos(list(reversed(combos)))
     for pos, top in to_print.items():
         print()
         print_header(f"Top {len(top)} {pos}s")
         for i, sleeper_id in enumerate(list(top)):
             print(f"{i+1}.", players.sleeper[sleeper_id].tostr())
+
+
+def sleeper_auctions():
+    ps = sorted(players.sleeper.values(),
+                key = lambda p: p.draft_value - p.sleeper_auction_value)
+
+    table = Table(title=f"Sleeper Auction Comp")
+    table.add_column("Value", justify="right", style="cyan")
+    table.add_column("Sleeper Proj", style="magenta", justify="right")
+    table.add_column("Savings", style="green", justify="right")
+    table.add_column("Player")
+
+    for p in ps:
+        if not p.sleeper_auction_value:
+            continue
+        diff = p.draft_value - p.sleeper_auction_value
+        if diff <= 0:
+            continue
+        table.add_row(
+            f"${p.draft_value}",
+            f"${p.sleeper_auction_value}",
+            f"${diff}",
+            p.tostr(emoji=False, notes=False))
+
+    console = Console()
+    console.print(table)
+
+
+def print_tier_info(pos, tier):
+    ps = []
+
+    num_drafted = 0
+    num_remaining = 0
+    num_keeper = 0
+    first_price = None
+    last_price = None
+    total_price = 0
+
+    for p in players.sleeper.values():
+        if pos == OVERALL_TIER:
+            if p.overall_tier != tier:
+                continue
+        elif p.position != pos or p.pos_tier != tier:
+            continue
+        ps.append(p)
+        if p.actual_draft_pos is not None:
+            if p.actual_draft_pos == 0:
+                num_keeper += 1
+            else:
+                num_drafted += 1
+                if first_price is None:
+                    first_price = p.actual_cost
+                last_price = p.actual_cost
+                total_price += p.actual_cost
+        else:
+            num_remaining += 1
+
+    ps.sort(key=lambda p: (
+        p.actual_draft_pos if p.actual_draft_pos is not None else 1000,
+        p.adp or 1000))
+
+    table = Table(title=f"Position: {pos} Tier: {tier}")
+    table.add_column("Draft", justify="right", style="cyan")
+    table.add_column("Cost", style="magenta", justify="right")
+    table.add_column("Player")
+
+    for p in ps:
+        if p.actual_draft_pos is not None:
+            draft = str(p.actual_draft_pos) if p.actual_draft_pos else "K"
+            cost = f"${p.actual_cost}"
+        else:
+            draft = ""
+            cost = ""
+        table.add_row(
+            draft,
+            cost,
+            p.tostr(emoji=False, notes=False))
+    console = Console()
+    console.print(table)
+    print()
+    print(num_keeper, "Kept,",
+          num_drafted, "Drafted,",
+          num_remaining, "Remaining")
+    if num_drafted > 0:
+        print()
+        print(f"First: ${first_price}"
+              f" Last: ${last_price}"
+              f" Avg: ${total_price/num_drafted}")
+
+
+
+def input_tiers():
+    positions = {"QB", "RB", "WR", "TE"}
+    pos = None
+    while not pos:
+        print("Position: ", end="")
+        pos = input()
+        if not pos:
+            return
+        if pos.lower() == "all":
+            pos = "all"
+            break
+        if "overall".startswith(pos.lower()):
+            pos = OVERALL_TIER
+            break
+        for p in positions:
+            if p.startswith(pos.upper()):
+                pos = p
+        if pos not in positions:
+            print(f"Invalid position: {pos}")
+            pos = None
+
+    tier = None
+    while not tier:
+        print("Tier: ", end="")
+        tier = input()
+        if not tier:
+            return
+        if "all".startswith(tier.lower()):
+            tier = ALL_TIERS
+            break
+        if "top".startswith(tier.lower()):
+            tier = TOP_TIERS
+            break
+        try:
+            tier = int(tier)
+        except:
+            print(f"Invalid tier: {tier}")
+            tier = None
+        if tier > 15:
+            print("Tier must be 1 - 15")
+            tier = None
+
+    tiers = []
+    if tier == TOP_TIERS:
+        tiers = reversed(range(1,15))
+    elif tier == ALL_TIERS:
+        tiers = reversed(range(1,16))
+    else:
+        tiers = [tier]
+
+    print("tiers", tiers)
+
+    for t in tiers:
+        if pos == "all":
+            for pos in positions:
+                print_tier_info(pos, t)
+        else:
+            print_tier_info(pos, t)
 
 
 
@@ -1454,6 +1688,9 @@ def input_combos():
         pos = input()
         if not pos:
             return
+        for p in pos_max:
+            if p.startswith(pos.upper()):
+                pos = p
         if pos not in pos_max:
             print(f"Invalid position: {pos}")
             pos = None
@@ -1495,9 +1732,11 @@ def input_combos():
 
 def print_rosters():
     with draft.lock:
-        teams = [t for t in fantasy_teams.values()]
+        teams = [t for t in fantasy_team_roster_id.values()]
         teams.sort(key=lambda t: (t.score, t.name), reverse=True)
         for i, team in enumerate(teams):
+            if team == UNKNOWN_TEAM and not team.players:
+                continue
             print(f"#{i+1}", team)
             for p in team.players:
                 print(f"  {p.tostr()}")
@@ -1566,13 +1805,18 @@ def main():
         download_nfl_players()
 
     load_sleeper()
-    load_projections(players)
-    do_rankings(players)
-    load_2025_matchups(players)
     load_draft_values(players)
+
+    #TODO
+    load_draft_values_gen(players)
+
+
     load_ol_def_rankings(players)
     load_keeper_costs(players)
     load_extra(players)
+
+    load_2025_matchups(players)
+    do_rankings(players)
 
     if args.refresh:
         refresh_rosters()
@@ -1598,11 +1842,32 @@ def main():
         ("x", "Refresh draft", refresh_draft),
         ("P", "Print remaining prospects", print_prospects),
         ("a", "Analyze", draft_analyze),
+        ("T", "Tier Progress", input_tiers),
+        ("V", "Sleeper auction values", sleeper_auctions),
         ("D", "Debug", breakpoint),
         ("q", "Quit", lambda: sys.exit(0)),
     ]
     while prompt(prompts):
         pass
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="analyze", formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument('-r', '--roster', dest='roster', action="store_true")
+    parser.add_argument('-q', '--query', dest='query', nargs='+')
+    parser.add_argument('-p', '--pos', dest="pos")
+    parser.add_argument('-d', '--draft', dest="num_draft", type=int, default=1)
+    parser.add_argument('-l', '--play', dest="num_play", type=int, default=1)
+    parser.add_argument('-s', '--sim', dest="sim", action="store_true")
+    parser.add_argument('-v', '--verbose', dest="verbose", action="store_true")
+    parser.add_argument('--max-age', dest="max_age", type=int, default=100)
+    parser.add_argument('--refresh', dest="refresh", action="store_true")
+    global VERBOSE, MAX_AGE
+    args = parser.parse_args()
+    VERBOSE = args.verbose
+    MAX_AGE = args.max_age
+    return args
 
 if __name__ == "__main__":
     args = parse_args()
