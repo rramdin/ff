@@ -16,14 +16,16 @@ import time
 import logging
 import re
 import urllib.request
-import texteditor
+
+import texteditor # type: ignore[import-untyped]
 import textwrap
 import math
 import getpass
+from fzf import Fzf, fzf # type: ignore[import-untyped]
 
-from sleeper_wrapper import League, Players
+from sleeper_wrapper import League, Players # type: ignore[import-untyped]
 from functools import cache
-from thefuzz import process, fuzz
+from thefuzz import process, fuzz # type: ignore[import-untyped]
 from rich import print
 from rich.progress import track
 from rich.highlighter import Highlighter
@@ -31,16 +33,13 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.console import Console
 
-
+from typing import Any, TypeVar, Callable, Sequence
+T = TypeVar('T')
 
 VERBOSE = False
 
 # Whether to use pre-draft rosters or just keepers
 PRE_DRAFT = True
-
-# Local state store notes and liked/disliked players. The editor is selected
-# based on the EDITOR environment variable.
-local_state = []
 
 # During the draft, how often to poll for draft updates. Rate-limit to avoid
 # overwhelming the sleeper API. When --refresh is specified, we start a second
@@ -138,8 +137,13 @@ except:
                   " and find user_id or use get_sleeper_user.py")
     sys.exit(1)
 
-def load_config():
-    def get(s, default=None):
+STATE_FILE = ""
+LEAGUE_ID = ""
+MY_USER_ID = ""
+DRAFT_ID = None
+KEEPERS_FILE = ""
+def load_config() -> None:
+    def get(s: str, default: T) -> str | T:
         global CONFIG
         if hasattr(CONFIG, s):
             return getattr(CONFIG, s)
@@ -147,15 +151,15 @@ def load_config():
     global STATE_FILE, LEAGUE_ID, MY_USER_ID, DRAFT_ID, KEEPERS_FILE
     STATE_FILE = get("STATE_FILE",
                      f"data/local_state_{getpass.getuser()}.json")
-    LEAGUE_ID = get("LEAGUE_ID")
-    MY_USER_ID = get("MY_USER_ID")
-    DRAFT_ID = get("DRAFT_ID")
-    KEEPERS_FILE = get("KEEPERS_FILE")
+    LEAGUE_ID = get("LEAGUE_ID", "")
+    MY_USER_ID = get("MY_USER_ID", "")
+    DRAFT_ID = get("DRAFT_ID", None)
+    KEEPERS_FILE = get("KEEPERS_FILE", "")
 
 load_config()
 
 class Matchup:
-    def __init__(self, arr):
+    def __init__(self, arr: list[str]) -> None:
         self.is_home = arr[1].startswith("@")
         self.is_bye = arr[1].startswith("BYE")
         if self.is_bye:
@@ -164,7 +168,7 @@ class Matchup:
             self.opponent = arr[1].replace("@", "").strip()
             self.favor = int(arr[2])
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.is_bye:
             return "BYE"
         return f"{'@' if self.is_home else ''}{self.opponent} ({self.favor})"
@@ -179,29 +183,29 @@ class Team:
     def_ranking: int = 0
 
     @property
-    def namec(self):
+    def namec(self) -> str:
         return f"[bold #{self.color}]{self.name}[/bold #{self.color}]"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"[bold #{self.color}]{self.long_name}[/bold #{self.color}]"
 
 
-teams = {}
+teams: dict[str, Team] = {}
 
-class WeekFPPGs(collections.UserList):
-    def __init__(self, obj=None):
+class WeekFPPGs(collections.UserList[float]):
+    def __init__(self, obj:Any|None=None) -> None:
         super().__init__(obj if obj else list())
         for _ in range(18):
             self.append(0.0)
-    def __str__(self):
+    def __str__(self) -> str:
         return ', '.join("%.2f" % f for f in self)
 
 class PlayerName(str):
     @property
-    def unf(self):
+    def unf(self) -> str:
         return super().__str__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"[bold blue]{super().__str__()}[/bold blue]"
 
 
@@ -220,28 +224,31 @@ class Player:
     experience = None
     number = 0
     status = "UNK"
-    sleeper_id = 0
+    sleeper_id = ""
     projection = 0.0
     keeper_cost = 0
     draft_value = 0
     actual_cost = 0
-    actual_draft_pos = None
-    fantasy_team = None
+    actual_draft_pos: int | None = None
+    fantasy_team: "FantasyTeam | None" = None
     is_override = False
 
+    depth_chart_position = "UN"
+    depth_chart_order = 100
+
     adp = 1000.0
-    overall_tier = 15.0
-    pos_tier = 15.0
+    overall_tier = 15
+    pos_tier = 15
     is_keeper = False
     sleeper_auction_value = 0.0
-    ds_note = None
+    ds_note: str|None = None
 
-    team:Team = None
+    team:Team | None = None
 
     injury_risk = "Unknown"
     career_injuries = 0
     injury_risk_per_season = 0.0
-    durability = 0
+    durability = 0.0
     projected_games_missed = 0.0
 
     weeks: list[Matchup] = field(default_factory=list)
@@ -251,21 +258,41 @@ class Player:
     first_downs_per_route_run = 0.0
     first_downs_per_route_run_rank = 0
 
-    def __hash__(self):
+    channel_id = ""
+    fantasy_data_id = ""
+    pandascore_id = ""
+    opta_id = ""
+    sportradar_id = ""
+    yahoo_id = ""
+    gsis_id = ""
+    birth_date = ""
+    rotowire_id = ""
+    oddsjam_id = ""
+    search_rank = ""
+    swish_id = ""
+    player_id = ""
+    rotoworld_id = ""
+    espn_id = ""
+    stats_id = ""
+    injury_status = ""
+    injury_notes = ""
+    college = ""
+
+    def __hash__(self) -> int:
         return hash(self.sleeper_id)
 
-    def week_fppg(self, i):
+    def week_fppg(self, i:int) -> float:
         if i >= len(self.weeks):
             return 0.0
         return self.week_fppgs[i]
 
-    def adj_projection(self):
+    def adj_projection(self) -> float:
         return self.projection * (17 - self.projected_games_missed) / 17
 
-    def name_str(self):
+    def name_str(self) -> str:
         return f"[bold blue]{self.name}[/bold blue]"
 
-    def calc_score(self):
+    def calc_score(self) -> None:
         stars = 0
         proj = self.adj_projection()
         for i in range(len(self.weeks)):
@@ -280,14 +307,14 @@ class Player:
                 self.week_fppgs[i] = fixed + points_per_star * self.weeks[i].favor
 
     @property
-    def picked(self):
-        return self.fantasy_team and self.fantasy_team.id == MY_USER_ID
+    def picked(self) -> bool:
+        return self.fantasy_team is not None and self.fantasy_team.id == MY_USER_ID
 
     @property
-    def taken(self):
-        return self.fantasy_team and self.fantasy_team.id != MY_USER_ID
+    def taken(self) -> bool:
+        return self.fantasy_team is not None and self.fantasy_team.id != MY_USER_ID
 
-    def tostr(self, unf=False, emoji=True, notes=True):
+    def tostr(self, unf:bool=False, emoji:bool=True, notes:bool=True) -> str:
         t = 'N'
         if self.taken:
             t = 'T'
@@ -308,6 +335,7 @@ class Player:
             team_info = "Free Agent"
 
         if notes:
+            assert local_state is not None
             if self.sleeper_id in local_state.notes:
                   note = local_state.notes[self.sleeper_id]
                   if not note[0]:
@@ -325,10 +353,10 @@ class Player:
                 prefix = ""
 
             if self.ds_note:
-                note = f"[{self.ds_note}] "
+                n = f"[{self.ds_note}] "
                 if not unf:
                     color = "#FC6A03"
-                    prefix += f"[bold {color}]{note}[/bold {color}]"
+                    prefix += f"[bold {color}]{n}[/bold {color}]"
         else:
             prefix = ""
 
@@ -349,10 +377,10 @@ class Player:
                 f"{keeper_cost}"
                 f" Val: ${self.draft_value}{actual_cost}")
 
-    def last_name(self):
+    def last_name(self) -> str:
         return self.name.split()[-1]
 
-    def pos_order(self):
+    def pos_order(self) -> int:
         if self.position == "QB":
             return 1
         elif self.position == "RB":
@@ -366,7 +394,7 @@ class Player:
         else:
             return 10
 
-    def print_all_fields(self):
+    def print_all_fields(self) -> None:
         m = {}
         for attr in dir(self):
             if attr.startswith('_'):
@@ -383,7 +411,7 @@ class Player:
             m[attr] = value
         print(m)
 
-    def tostrl(self):
+    def tostrl(self) -> str:
         height_feet = int(self.height/12)
         height_inches = self.height - height_feet*12
         exp = "Unknown"
@@ -394,6 +422,7 @@ class Player:
         else:
             exp = self.experience
 
+        assert local_state is not None
         if self.sleeper_id in local_state.notes:
             note = local_state.notes[self.sleeper_id]
             note_text = textwrap.fill(note[1])
@@ -455,12 +484,12 @@ class Player:
 
 
 class PlayerLookup:
-    def __init__(self):
-        self.sleeper = {}
-        self.name = {}
-        self.id = collections.defaultdict(dict)
+    def __init__(self) -> None:
+        self.sleeper: dict[str, Player] = {}
+        self.name: dict[str, Player] = {}
+        self.id: dict[str, dict[str, Player]] = collections.defaultdict(dict)
 
-    def add(self, player):
+    def add(self, player: Player) -> None:
         self.sleeper[player.sleeper_id] = player
 
         existing = self.name.get(player.name)
@@ -479,7 +508,7 @@ class PlayerLookup:
                 if the_id:
                     self.id[attr][getattr(player, attr)] = player
 
-    def find(self, token):
+    def find(self, token: str) -> Player | None:
         if token in teams:
             return None
 
@@ -488,13 +517,6 @@ class PlayerLookup:
 
         p = self.name.get(token)
         if p: return p
-
-        try:
-            player_id = int(token)
-            p = self.sleeper.get(player_id)
-            if p: return p
-        except ValueError:
-            pass
 
         name = str(token)
         for suffix in [' Jr.', ' Sr.', ' III', ' II']:
@@ -517,25 +539,25 @@ class PlayerLookup:
 players = PlayerLookup()
 
 class FantasyTeam:
-    def __init__(self, name, team_id):
+    def __init__(self, name: str, team_id: str) -> None:
         self.name = name
         self.id = team_id
-        self.players = []
+        self.players: list[Player] = []
         self.score = 0.0
 
-    def add_player(self, player):
+    def add_player(self, player: Player) -> None:
         if player.fantasy_team:
             player.fantasy_team.remove_player(player)
         self.players.append(player)
         player.fantasy_team = self
         self.calc_score()
 
-    def remove_player(self, player):
+    def remove_player(self, player: Player) -> None:
         self.players.remove(player)
         player.fantasy_team = None
         self.calc_score()
 
-    def calc_score(self):
+    def calc_score(self) -> None:
         self.score = 0.0
         for player in self.players:
             self.score += player.projection
@@ -543,13 +565,13 @@ class FantasyTeam:
             self.score = self.score / len(self.players) / 17.0
 
     @property
-    def namec(self):
+    def namec(self) -> str:
         color = "#d78700"
         if self.id == MY_USER_ID:
             color = "green"
         return f"[bold {color}]{self.name}[/bold {color}]"
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} ({len(self.players)} players, score: {self.score:.2f})"
 
 UNKNOWN_TEAM = FantasyTeam("Unknown", "")
@@ -563,11 +585,11 @@ fantasy_team_roster_id = {
     0: UNKNOWN_TEAM,
 }
 
-def print_header(s):
+def print_header(s: str) -> None:
     print(s)
     print("-" * len(s))
 
-def load_2025_matchups(players):
+def load_2025_matchups(players: PlayerLookup) -> None:
     with open(MATCHUPS_FILE, "r") as f:
         j = json.loads(f.read())
         for player, weeks in track(j.items(), description="Loading matchups"):
@@ -580,9 +602,7 @@ def load_2025_matchups(players):
                 p.weeks.append(matchup)
             p.calc_score()
 
-    return players
-
-def load_sleeper():
+def load_sleeper() -> None:
     position_mapping = {
         "QB": "QB",
         "FB": "RB",
@@ -663,7 +683,6 @@ def load_sleeper():
             p.oddsjam_id = info.get("oddsjam_id")
             p.search_rank = info.get("search_rank")
             p.swish_id = info.get("swish_id")
-            p.player_id = info.get("player_id")
             p.rotoworld_id = info.get("rotoworld_id")
             p.espn_id = info.get("espn_id")
             p.stats_id = info.get("stats_id")
@@ -770,18 +789,18 @@ def load_sleeper():
             name = r['player']
             if name in teams:
                 continue
-            p = players.find(name)
-            if not p:
+            pl = players.find(name)
+            if not pl:
                 logging.error("Could not find %s", name)
                 continue
-            p.sleeper_auction_value = int(r['cost'].replace('$', ''))
+            pl.sleeper_auction_value = int(r['cost'].replace('$', ''))
 
 
-def load_league(players):
+def load_league(players: PlayerLookup) -> None:
     global local_state, fantasy_team_roster_id
     with draft.lock:
-        for p in players.sleeper.values():
-            p.fantasy_team = None
+        for pl in players.sleeper.values():
+            pl.fantasy_team = None
 
         with open(USERS_FILE, "r") as f:
             for j in track(json.loads(f.read()), "Loading league"):
@@ -828,9 +847,7 @@ def load_league(players):
     for team in fantasy_team_roster_id.values():
         team.calc_score()
 
-    return players
-
-def load_draft_values(players):
+def load_draft_values(players: PlayerLookup) -> None:
     with open(DRAFT_VALUE_FILE, "r") as f:
         reader = csv.DictReader(f, quotechar='"')
         for r in reader:
@@ -853,7 +870,7 @@ def load_draft_values(players):
             p.ds_note = r["Note"]
 
 
-def load_draft_values_gen(players):
+def load_draft_values_gen(players: PlayerLookup) -> None:
     with open(DRAFT_VALUE_FILE_GEN, "r") as f:
         reader = csv.DictReader(f, quotechar='"')
         for r in reader:
@@ -872,7 +889,7 @@ def load_draft_values_gen(players):
             p.projection = float(r["DS Proj"])
 
 
-def load_draft_values_old(players):
+def load_draft_values_old(players:PlayerLookup) -> None:
     #   1.  Ja'Marr Chase (CIN - WR)  $62
     with open(DRAFT_VALUE_FILE, "r") as f:
         for line in track(f, "Loading draft values", total=150):
@@ -893,8 +910,8 @@ def load_draft_values_old(players):
             else:
                 logging.info(f"Player {name} not found in players")
 
-def load_ol_def_rankings(players):
-    def fix_team(s):
+def load_ol_def_rankings(players: PlayerLookup) -> None:
+    def fix_team(s:str) -> str:
         s = s.strip().upper()
         return {
             "TAMPA BAY BUCCANEERS": "TB",
@@ -927,7 +944,7 @@ def load_ol_def_rankings(players):
                 print(m.group(2))
         for team in teams.values():
             if not team.ol_ranking:
-                logger.warning("No O-Line ranking for team", team.name)
+                logging.warning("No O-Line ranking for team", team.name)
     with open(DEF_FILE, "r") as f:
         for line in track(f, description="Loading defense rankings", total=32):
             line = line.strip()
@@ -944,9 +961,9 @@ def load_ol_def_rankings(players):
                 print(m.group(2))
         for team in teams.values():
             if not hasattr(team, 'def_ranking'):
-                logger.warning("No Defense ranking for team", team.name)
+                logging.warning("No Defense ranking for team", team.name)
 
-def load_keeper_costs(players):
+def load_keeper_costs(players:PlayerLookup) -> None:
     if not KEEPERS_FILE:
         return
     with open(KEEPERS_FILE, "r") as f:
@@ -954,15 +971,16 @@ def load_keeper_costs(players):
         for player_id, cost in track(j.items(), "Loading keeper costs"):
             player = players.sleeper.get(player_id)
             if not player:
-                logging.warning(f"Player {p['player_id']} not found in players")
+                logging.warning(f"Player {player_id} not found in players")
                 continue
             player.keeper_cost = cost
 
-def load_extra(players):
+def load_extra(players: PlayerLookup) -> None:
     with open(INJURIES_FILE, "r") as f:
         reader = csv.DictReader(f)
         for r in track(reader, description="Loading injury predictions", total=200):
             match = re.match(r"([ \S]+([a-z\.]| I*))[A-Z]+ \d+$", r["player"])
+            assert match
             name = match.group(1)
             p = players.find(name)
             if not p:
@@ -981,13 +999,13 @@ def load_extra(players):
                 logging.warning("Could not lookup player for routes run for '%s'",
                                 r["name"])
                 continue
-            p.routes_run = r['routes']
-            p.first_downs_per_route_run = r['first_downs_per_route_run']
-            p.first_downs_per_route_run_rank = r['rank']
+            p.routes_run = int(r['routes'])
+            p.first_downs_per_route_run = float(r['first_downs_per_route_run'])
+            p.first_downs_per_route_run_rank = int(r['rank'])
 
 
 
-def download_file(url, filename):
+def download_file(url: str, filename: str) -> None:
     try:
         with urllib.request.urlopen(url) as response:
             data = json.load(response)
@@ -998,31 +1016,31 @@ def download_file(url, filename):
         logging.error(f"Error downloading {filename}: {e}")
 
 class Draft:
-    def __init__(self):
-        self.picks = []
-        self.thread = None
+    def __init__(self) -> None:
+        self.picks: list[tuple[str, int, Player, int, int, int]] = []
+        self.thread : threading.Thread | None  = None
         self.lock = threading.RLock()
-        self.slot_to_team = {}
+        self.slot_to_team: dict[int, FantasyTeam] = {}
         self.initial_load = True
         self.is_sim = False
 
-    def start(self):
+    def start(self) -> None:
         self.thread = threading.Thread(target=self.run, daemon=True)
         self.refresh()
         self.thread.start()
 
-    def start_sim(self):
+    def start_sim(self) -> None:
         self.is_sim = True
         self.refresh()
         self.thread = threading.Thread(target=self.run, daemon=True)
         self.thread.start()
 
-    def run(self):
+    def run(self) -> None:
         while True:
             self.refresh()
             time.sleep(REFRESH_RATE)
 
-    def refresh(self):
+    def refresh(self) -> None:
         if not DRAFT_ID:
             logging.warning("DRAFT_ID is not set, skipping draft refresh")
             return
@@ -1032,12 +1050,12 @@ class Draft:
             download_file(f"https://api.sleeper.app/v1/draft/{DRAFT_ID}", DRAFT_FILE)
         self.load()
 
-    def reapply_all(self):
+    def reapply_all(self) -> None:
         for info in self.picks:
             self.apply(*info)
 
-    def apply(self, picked_by, draft_slot, player,
-              amount, pick_no, draft_round):
+    def apply(self, picked_by: str, draft_slot: int, player: Player,
+              amount: int, pick_no: int, draft_round:int) -> None:
         if not draft_slot and player.fantasy_team:
             logging.warning(f"Player {player.name} has no draft_slot "
                             "but has a fantasy team, not removing from team")
@@ -1071,11 +1089,11 @@ class Draft:
             print_tier_info(OVERALL_TIER, player.overall_tier)
             print_tier_info(player.position, player.pos_tier)
 
-    def load(self):
+    def load(self) -> None:
         if os.path.exists(DRAFT_FILE):
             with open(DRAFT_FILE, "r") as f:
                 j = json.loads(f.read())
-                self.slot_to_id = {}
+                self.slot_to_id: dict[int, int] = {}
                 for slot, roster_id in j.get('slot_to_roster_id', {}).items():
                     self.slot_to_team[int(slot)] = fantasy_team_roster_id.get(int(roster_id), UNKNOWN_TEAM)
         else:
@@ -1096,12 +1114,12 @@ class Draft:
                 if not player:
                     logging.warning(f"Player {p['player_id']} not found in players")
                     continue
-                draft_slot = p["draft_slot"]
-                picked_by = p.get("picked_by")
-                amount = p['metadata']['amount']
-                pick_no = p['pick_no']
-                draft_round = p['round']
-                info = [picked_by, int(draft_slot), player, amount, pick_no, draft_round]
+                draft_slot = int(p["draft_slot"])
+                picked_by = p.get("picked_by", 0)
+                amount = int(p['metadata']['amount'])
+                pick_no = int(p['pick_no'])
+                draft_round = int(p['round'])
+                info = (picked_by, int(draft_slot), player, amount, pick_no, draft_round)
                 self.picks.append(info)
                 self.apply(*info)
                 added += 1
@@ -1113,10 +1131,10 @@ class Draft:
 
 draft = Draft()
 
-def refresh_draft():
+def refresh_draft() -> None:
     draft.refresh()
 
-def load_projections_old(players):
+def load_projections_old(players:PlayerLookup) -> None:
     with open(PROJECTIONS_FILE, "r", encoding="utf-8-sig") as f:
         reader = csv.reader(f, quotechar='"')
         header1 = next(reader)
@@ -1155,7 +1173,7 @@ def load_projections_old(players):
             )
             p.projection = proj
 
-def do_rankings(players):
+def do_rankings(players: PlayerLookup) -> None:
     positions = ['QB', 'RB', 'WR', 'TE', 'K']
     all_players = []
     by_position = collections.defaultdict(list)
@@ -1172,21 +1190,21 @@ def do_rankings(players):
         for i, p in enumerate(by_position[pos]):
             p.positional_rank = i + 1
 
-
-def combo_score(players, n):
-    wks = []
-    play = []
+def combo_score(players: list[Player], n: int) -> tuple[float, list[list[Player]]]:
+    wks: list[float] = []
+    play: list[list[Player]] = []
     for i in range(COMBOS_NUM_GAMES):
         players.sort(key=lambda p: -p.week_fppg(i))
         play.append(players[0:n])
         wks.append(sum(p.week_fppg(i) for p in play[-1]))
     if len(wks) > COMBOS_MAX_WEEK:
-        wks = wks.sort(reverse=True)[:COMBOS_MAX_WEEK]
+        wks = sorted(wks, reverse=True)[:COMBOS_MAX_WEEK]
     return sum(wks), play
 
-def do_combo(players, n, m):
-    picked = []
-    filtered = []
+type Combo = tuple[list[Player], float, list[list[Player]]]
+def do_combo(players: list[Player], n: int, m: int) -> list[Combo]:
+    picked: list[Player] = []
+    filtered: list[Player] = []
     for p in players:
         if p.picked:
             picked.append(p)
@@ -1213,13 +1231,13 @@ def do_combo(players, n, m):
     combos = itertools.combinations(filtered[:limit], n - len(picked))
     ret = []
     for c in track(combos, description="Processing combinations", total=num_combos):
-        c = list(c) + picked
-        score, play = combo_score(c, m)
-        ret.append((c, score, play))
+        co = list(c) + picked
+        score, play = combo_score(co, m)
+        ret.append((co, score, play))
     ret.sort(key=lambda c: c[1])
     return ret
 
-def print_combos(combos):
+def print_combos(combos : list[Combo]) -> None:
     NUM_PRINT = 500
 
     rank = min(len(combos), NUM_PRINT)
@@ -1235,18 +1253,18 @@ def print_combos(combos):
         #     print(f"Week{i+1}: ", ", ".join([p.last_name() for p in play[i]]))
         # print()
 
-def by_pos(players):
-    by_position = collections.defaultdict(list)
+def by_pos(players: PlayerLookup) -> dict[str, list[Player]]:
+    by_position: dict[str, list[Player]] = collections.defaultdict(list)
     for p in players.sleeper.values():
         by_position[p.position].append(p)
     return by_position
 
-def print_players():
+def print_players() -> None:
     with draft.lock:
         for p in sorted(players.sleeper.values(), key = lambda p: p.adj_projection()):
             print(p.tostr())
 
-def print_keeper_costs():
+def print_keeper_costs() -> None:
     with draft.lock:
         for ft in fantasy_team_roster_id.values():
             to_print = [p for p in ft.players if p.keeper_cost > 0]
@@ -1257,9 +1275,12 @@ def print_keeper_costs():
                 print(f"{p.name:25s} | ${p.keeper_cost}")
             print()
 
-def print_prospects():
+def print_prospects() -> None:
     with draft.lock:
         pros = []
+
+        assert local_state is not None
+        assert local_state.notes is not None
 
         for sleeper_id in local_state.notes:
             p = players.sleeper.get(sleeper_id)
@@ -1274,7 +1295,7 @@ def print_prospects():
 
         print()
         for p in reversed(pros):
-            a, n = local_state.notes.get(p.sleeper_id)
+            a, n = local_state.notes.get(p.sleeper_id, ["", ""])
             if a not in ("Like", "Love"):
                 continue
             print()
@@ -1283,18 +1304,18 @@ def print_prospects():
 
 
 
-def do_combos(players, pos, num_draft, num_play):
+def do_combos(players: PlayerLookup, pos: str, num_draft: int, num_play: int) -> list[Combo]:
     by_position = by_pos(players)
     combos = do_combo(by_position[pos], num_draft, num_play)
     return combos
 
-def print_roster():
+def print_roster() -> None:
     with draft.lock:
-        team_count = collections.defaultdict(int)
+        team_count : dict[str, int] = collections.defaultdict(int)
         total_age = 0
         mine = []
         for p in players.sleeper.values():
-            if p.picked:
+            if p.team:
                 mine.append(p)
                 team_count[p.team.name] += 1
                 total_age += p.age
@@ -1312,7 +1333,7 @@ def print_roster():
         for p in mine:
             print(p.tostr(notes=False))
 
-def refresh_rosters():
+def refresh_rosters() -> None:
     league = League(LEAGUE_ID)
     rosters = league.get_rosters()
     users = league.get_users()
@@ -1322,13 +1343,13 @@ def refresh_rosters():
         json.dump(users, f, indent=4)
 
 class LocalState:
-    def __init__(self, players):
+    def __init__(self, players: PlayerLookup) -> None:
         self.players = players
-        self.overrides = {}
-        self.notes = {}
+        self.overrides: dict[str, str] = {}
+        self.notes: dict[str, tuple[str, str]] = {}
         self.load()
 
-    def load(self):
+    def load(self) -> None:
         if os.path.exists(STATE_FILE):
             with open(STATE_FILE, "r") as f:
                 j = json.loads(f.read())
@@ -1340,7 +1361,7 @@ class LocalState:
                 self.notes = j.get('notes', {})
         self.apply()
 
-    def apply(self):
+    def apply(self) -> None:
         for player_id, user_id in self.overrides.items():
             p = self.players.sleeper.get(player_id)
             if p:
@@ -1348,41 +1369,44 @@ class LocalState:
                 p.is_override = True
 
 
-    def save(self):
+    def save(self) -> None:
         with open(STATE_FILE, "w") as f:
             json.dump({
                 'overrides': self.overrides,
                 'notes': self.notes,
             }, f, indent=4)
 
-    def pick(self, player):
+    def pick(self, player: Player) -> None:
         with draft.lock:
             fantasy_team = fantasy_teams.get(MY_USER_ID, UNKNOWN_TEAM)
             fantasy_team.add_player(player)
             self.overrides[player.sleeper_id] = fantasy_team.id
             player.is_override = True
             self.save()
-    def take(self, player):
+    def take(self, player: Player) -> None:
         with draft.lock:
             UNKNOWN_TEAM.add_player(player)
+            assert player.fantasy_team
             self.overrides[player.sleeper_id] = player.fantasy_team.id
             player.is_override = True
             self.save()
-    def unpick(self, player):
+    def unpick(self, player: Player) -> None:
         with draft.lock:
             if player.fantasy_team:
                 player.fantasy_team.remove_player(player)
-            self.overrides[player.sleeper_id] = None
+            if player.sleeper_id in self.overrides:
+                del self.overrides[player.sleeper_id]
             player.is_override = True
             self.save()
-    def untake(self, player):
+    def untake(self, player: Player) -> None:
         with draft.lock:
             if player.fantasy_team:
                 player.fantasy_team.remove_player(player)
-            self.overrides[player.sleeper_id] = None
+            if player.sleeper_id in self.overrides:
+                del self.overrides[player.sleeper_id]
             player.is_override = True
             self.save()
-    def clear(self, player):
+    def clear(self, player: Player) -> None:
         with draft.lock:
             if player.sleeper_id in self.overrides:
                 del self.overrides[player.sleeper_id]
@@ -1392,50 +1416,57 @@ class LocalState:
             self.save()
         self.apply()
 
-    def clear_notes(self, player):
+    def clear_notes(self, player: Player) -> None:
         if player.sleeper_id in self.notes:
             del self.notes[player.sleeper_id]
             self.save()
 
-    def note(self, action, player):
+    def note(self, action: str, player: Player) -> None:
         n = texteditor.open(self.notes.get(player.sleeper_id, [None, ""])[1])
         if not n:
             n = f"Player {action.lower()}"
-        self.notes[player.sleeper_id] = [action, n]
+        self.notes[player.sleeper_id] = (action, str(n))
         self.save()
 
-    def love_player(self, player):
+    def love_player(self, player: Player) -> None:
         self.note("Love", player)
 
-    def like_player(self, player):
+    def like_player(self, player: Player) -> None:
         self.note("Like", player)
 
-    def dislike_player(self, player):
+    def dislike_player(self, player: Player) -> None:
         self.note("Dislike", player)
 
-    def set_team(self, player, fantasy_team):
+    def set_team(self, player: Player, fantasy_team: FantasyTeam) -> None:
         with draft.lock:
             fantasy_team.add_player(player)
             self.overrides[player.sleeper_id] = fantasy_team.id
             player.is_override = False
             self.save()
 
-def prompt_set_team(player):
+# Local state store notes and liked/disliked players. The editor is selected
+# based on the EDITOR environment variable.
+local_state: "LocalState | None" = None
+
+type Prompt = tuple[str, str, Callable[[], bool | None]]
+
+def prompt_set_team(player: Player) -> None:
     teams = [t for t in fantasy_team_roster_id.values()]
-    prompts = []
-    def set_team(team):
+    prompts:list[Prompt] = []
+    def set_team(team: FantasyTeam) -> None:
         team.add_player(player)
     sel = "123456789ABCDEFHIJKLMNOPQRSTUVWXYZ"
+
+    assert local_state is not None
     for i, team in enumerate(teams):
-        prompts.append((sel[i], team.name, lambda t=team: local_state.set_team(player, t)))
+        prompts.append((sel[i], team.name, lambda: local_state.set_team(player, team)))
     prompts.append(("c", "Clear local state", lambda: local_state.clear(player)))
     prompts.append(("q", "Quit", lambda: True))
 
     while not prompt(prompts, lambda: print(player.tostrl())):
         pass
 
-def query_player():
-    from fzf import Fzf, fzf
+def query_player() -> None:
     chooser = Fzf()
 
     player_lookup = {p.tostr(unf=True): p for p in players.sleeper.values()}
@@ -1444,6 +1475,9 @@ def query_player():
         prompt="Choose player",
     )[0]
     p = player_lookup[choice]
+
+    assert local_state is not None
+
     draft = lambda: local_state.pick(p)
     undraft = lambda: local_state.unpick(p)
     take = lambda: local_state.take(p)
@@ -1473,7 +1507,7 @@ def query_player():
     while not prompt(prompts, lambda: print(p.tostrl())):
         pass
 
-def draft_analyze(verbose=True):
+def draft_analyze(verbose:bool=True) -> None:
     team = fantasy_teams[MY_USER_ID]
     needed = {}
     for pos, conf in DRAFT_SETTINGS.items():
@@ -1483,8 +1517,8 @@ def draft_analyze(verbose=True):
             needed[p.position] -= 1
     print("Needed:", ','.join([f"{p}: {n}" for p, n in needed.items()]))
 
-    combos = []
-    to_print = collections.defaultdict(list)
+    combos: list[Combo] = []
+    to_print: dict[str, list[str]] = collections.defaultdict(list)
     for pos, n in needed.items():
         if n < 0:
             print(f"Drafted too many {pos}s, should reconfigure draft settings")
@@ -1525,7 +1559,7 @@ def draft_analyze(verbose=True):
             print(f"{i+1}.", players.sleeper[sleeper_id].tostr())
 
 
-def sleeper_auctions():
+def sleeper_auctions() -> None:
     ps = sorted(players.sleeper.values(),
                 key = lambda p: p.draft_value - p.sleeper_auction_value)
 
@@ -1551,7 +1585,7 @@ def sleeper_auctions():
     console.print(table)
 
 
-def print_tier_info(pos, tier):
+def print_tier_info(pos: str, tier: int) -> None:
     ps = []
 
     num_drafted = 0
@@ -1614,7 +1648,7 @@ def print_tier_info(pos, tier):
 
 
 
-def input_tiers():
+def input_tiers() -> None:
     positions = {"QB", "RB", "WR", "TE"}
     pos = None
     while not pos:
@@ -1638,31 +1672,32 @@ def input_tiers():
     tier = None
     while not tier:
         print("Tier: ", end="")
-        tier = input()
-        if not tier:
+        inp = input()
+        if inp is None:
             return
-        if "all".startswith(tier.lower()):
+        if "all".startswith(inp.lower()):
             tier = ALL_TIERS
             break
-        if "top".startswith(tier.lower()):
+        if "top".startswith(inp.lower()):
             tier = TOP_TIERS
             break
         try:
-            tier = int(tier)
+            int_tier = int(inp)
+            if int_tier > 15:
+                print("Tier must be 1 - 15")
+                tier = None
         except:
             print(f"Invalid tier: {tier}")
             tier = None
-        if tier > 15:
-            print("Tier must be 1 - 15")
-            tier = None
+            continue
 
-    tiers = []
+    tiers: list[int] = []
     if tier == TOP_TIERS:
-        tiers = reversed(range(1,15))
+        tiers = list(reversed(range(1,15)))
     elif tier == ALL_TIERS:
-        tiers = reversed(range(1,16))
+        tiers = list(reversed(range(1,16)))
     else:
-        tiers = [tier]
+        tiers = [int(tier)]
 
     print("tiers", tiers)
 
@@ -1674,8 +1709,7 @@ def input_tiers():
             print_tier_info(pos, t)
 
 
-
-def input_combos():
+def input_combos() -> None:
     pos_max = {
         "QB": 1,
         "RB": 3,
@@ -1695,14 +1729,14 @@ def input_combos():
             print(f"Invalid position: {pos}")
             pos = None
 
-    num_play = None
+    num_play: int | None = None
     while not num_play:
         print("Number to play: ", end="")
-        num_play = input()
-        if not num_play:
+        inp = input()
+        if inp is None:
             return
         try:
-            num_play = int(num_play)
+            num_play = int(inp)
             if num_play < pos_max[pos]:
                 print(f"Must play at least {pos_max[pos]} {pos}s")
                 num_play = None
@@ -1710,14 +1744,16 @@ def input_combos():
             print(f"Invalid number: {num_play}")
             num_play = None
 
-    num_draft = None
+    assert num_play is not None
+
+    num_draft: int | None = None
     while not num_draft:
         print("Number to draft: ", end="")
-        num_draft = input()
-        if not num_draft:
+        inp = input()
+        if inp is not None:
             return
         try:
-            num_draft = int(num_draft)
+            num_draft = int(inp)
             if num_draft < num_play:
                 print(f"Must draft at least {num_play} {pos}s")
                 num_draft = None
@@ -1725,12 +1761,14 @@ def input_combos():
             print(f"Invalid number: {num_draft}")
             num_draft = None
 
+    assert num_draft is not None
+
     with draft.lock:
         combos = do_combos(players, pos, num_draft, num_play)
     print_combos(combos)
 
 
-def print_rosters():
+def print_rosters() -> None:
     with draft.lock:
         teams = [t for t in fantasy_team_roster_id.values()]
         teams.sort(key=lambda t: (t.score, t.name), reverse=True)
@@ -1742,7 +1780,7 @@ def print_rosters():
                 print(f"  {p.tostr()}")
             print()
 
-def print_prompt(prompts):
+def print_prompt(prompts: Sequence[Prompt]) -> None:
     print("\nMake choice:")
     for p in prompts:
         if p[1] == "Quit":
@@ -1752,7 +1790,7 @@ def print_prompt(prompts):
         print(f" [bold]({p[0]})[/bold]"
               f" [bold {color}]{p[1]}[/bold {color}]")
 
-def handle_input(prompts, c):
+def handle_input(prompts: Sequence[Prompt], c: str) -> Callable[[], bool | None]:
     print()
     for p in prompts:
         if c == p[0]:
@@ -1760,7 +1798,7 @@ def handle_input(prompts, c):
             return p[2]
     return lambda: False
 
-def prompt(prompts, before_fn=None):
+def prompt(prompts: Sequence[Prompt], before_fn: Callable[[], Any] | None = None) -> bool:
     try:
         # get stdin and save current terminal parameters
         fd = sys.stdin.fileno()
@@ -1780,14 +1818,14 @@ def prompt(prompts, before_fn=None):
             print_prompt(prompts)
             fn = handle_input(prompts, sys.stdin.read(1))
             termios.tcsetattr(fd, termios.TCSAFLUSH, orig)
-            should_stop = fn()
+            should_stop = bool(fn())
     finally:
         # reset terminal parameters to their original values
         termios.tcsetattr(fd, termios.TCSAFLUSH, orig)
 
     return True
 
-def download_nfl_players():
+def download_nfl_players() -> None:
     players = Players()
     all_players = players.get_all_players()
     nfl_players = {}
@@ -1798,7 +1836,7 @@ def download_nfl_players():
         json.dump(nfl_players, f)
 
 
-def main():
+def main() -> None:
     global players, local_state, REFRESH_RATE
 
     if args.refresh:
@@ -1832,6 +1870,15 @@ def main():
         else:
             draft.load()
 
+    def ex() -> bool:
+        sys.exit(0)
+        return False
+    def bp() -> bool:
+        breakpoint()
+        return True
+    def da() -> None:
+        draft_analyze()
+
     prompts = [
         ("p", "Query player", query_player),
         ("r", "Print roster", print_roster),
@@ -1841,16 +1888,16 @@ def main():
         ("k", "Print keeper costs", print_keeper_costs),
         ("x", "Refresh draft", refresh_draft),
         ("P", "Print remaining prospects", print_prospects),
-        ("a", "Analyze", draft_analyze),
+        ("a", "Analyze", da),
         ("T", "Tier Progress", input_tiers),
         ("V", "Sleeper auction values", sleeper_auctions),
-        ("D", "Debug", breakpoint),
-        ("q", "Quit", lambda: sys.exit(0)),
+        ("D", "Debug", bp),
+        ("q", "Quit", ex),
     ]
     while prompt(prompts):
         pass
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="analyze", formatter_class=argparse.RawTextHelpFormatter
     )
@@ -1871,8 +1918,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    logging.basicConfig(format=format,
-                        level=logging.DEBUG if args.verbose else logging.INFO,
+    logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         datefmt="%Y-%m-%d %H:%M:%S")
 
     main()
