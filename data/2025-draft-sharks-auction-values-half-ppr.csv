@@ -43,11 +43,11 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 42,SEA,"Jaxon Smith-Njigba",WR,17,8,1.5%,0%,187,196,$19,$21,38.8
 43,ARI,"Marvin Harrison Jr.",WR,17,8,0.9%,0%,194,189,$21,$21,38.6
 44,WAS,"Terry McLaurin",WR,17,12,-0.2%,0%,190,196,$22,$21,38.4
-45,PIT,"D.K. Metcalf",WR,17,5,1.9%,0%,190,196,$21,$21,37.8
+45,PIT,"DK Metcalf",WR,17,5,1.9%,0%,190,196,$21,$21,37.8
 46,NYJ,"Garrett Wilson",WR,17,9,3%,0%,182,190,$18,$20,36.7
 47,CAR,"Tetairoa McMillan",WR,17,14,2%,0%,178,193,$17,$20,36.7
 48,KC,"Xavier Worthy",WR,17,10,0.6%,0%,177,190,$17,$20,36.5
-49,CHI,"D.J. Moore",WR,17,5,0.5%,0%,182,189,$17,$20,35.8
+49,CHI,"DJ Moore",WR,17,5,0.5%,0%,182,189,$17,$20,35.8
 50,PHI,"DeVonta Smith",WR,17,9,1.1%,0%,180,188,$14,$19,34.7
 51,MIA,"Jaylen Waddle",WR,17,12,2.9%,0%,166,194,$13,$19,34.5
 52,DET,"Jameson Williams",WR,17,8,1%,0%,167,189,$18,$19,34.3
@@ -119,7 +119,7 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 118,SF,"Brandon Aiyuk",WR,11,14,1.1%,0%,132,143,$4,$5,9.9
 119,NE,"Hunter Henry",TE,17,14,1.6%,0%,105,111,$4,$5,9.7
 120,CLE,"Quinshon Judkins",RB,17,9,0.1%,0%,114,133,$3,$5,9.7
-121,TEN,"Chigoziem Okonkwo",TE,17,10,4.1%,0%,103,114,$5,$5,9
+121,TEN,"Chig Okonkwo",TE,17,10,4.1%,0%,103,114,$5,$5,9
 122,JAC,"Tank Bigsby",RB,17,8,0.6%,0%,107,123,$4,$5,8.9
 123,WAS,"Jacory Croskey-Merritt",RB,17,12,-3.9%,0%,127,118,$6,$5,8.9
 124,PIT,"Jonnu Smith",TE,17,5,3%,0%,99,107,$9,$5,8.7
@@ -143,7 +143,7 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 142,JAC,"Bhayshul Tuten",RB,17,8,0.6%,0%,87,103,$3,$3,5.5
 143,HOU,"Dalton Schultz",TE,17,6,2.3%,0%,94,104,$8,$3,5.3
 144,LAC,"Cameron Dicker",K,17,12,-0.9%,0%,157,162,$3,$3,5
-145,NYG,"Cameron Skattebo",RB,17,14,-4.6%,0%,101,119,$2,$3,5
+145,NYG,"Cam Skattebo",RB,17,14,-4.6%,0%,101,119,$2,$3,5
 146,PIT,"Pat Freiermuth",TE,17,5,3%,0%,91,98,$8,$3,4.9
 147,GB,"Jordan Love",QB,17,5,-3.1%,0%,278,303,$1,$2,4.5
 148,TEN,"Tyjae Spears",RB,13,10,-0.4%,0%,107,119,$1,$2,4.1
@@ -262,7 +262,7 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 261,BAL,"DeAndre Hopkins",WR,17,7,1.2%,0%,86,87,$1,$1,-13.6
 262,NE,"Austin Hooper",TE,17,14,1.6%,0%,56,57,$1,$1,-14
 263,LAC,"Oronde Gadsden II",TE,17,12,3.2%,0%,29,48,$1,$1,-14
-264,TEN,"Cameron Ward",QB,17,10,2.1%,0%,245,255,$1,$1,-14.5
+264,TEN,"Cam Ward",QB,17,10,2.1%,0%,245,255,$1,$1,-14.5
 265,NYG,"Devin Singletary",RB,17,14,-4.6%,0%,43,54,$1,$1,-14.7
 266,IND,"Adonai Mitchell",WR,17,11,-0.9%,0%,57,65,$1,$1,-14.9
 267,NE,"Kayshon Boutte",WR,17,14,1.1%,0%,66,91,$1,$1,-14.9
@@ -271,12 +271,12 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 270,HOU,"Jaylin Noel",WR,17,6,0.3%,0%,51,81,$1,$1,-15.3
 271,NYJ,"Josh Reynolds",WR,17,9,3%,0%,74,86,$1,$1,-15.4
 272,LVR,"Dont'e Thornton Jr.",WR,17,8,-0.8%,0%,73,72,$1,$1,-15.4
-273,GB,"Christopher Brooks",RB,17,5,-0.4%,0%,21,45,$1,$1,-15.6
+273,GB,"Chris Brooks",RB,17,5,-0.4%,0%,21,45,$1,$1,-15.6
 274,HOU,"Cade Stover",TE,17,6,2.3%,0%,30,48,$1,$1,-15.7
 275,LAR,"Tutu Atwell",WR,17,8,0.4%,0%,78,78,$1,$1,-15.7
 276,MIA,"Malik Washington",WR,17,12,2.9%,0%,60,79,$1,$1,-16.1
 277,NO,"Foster Moreau",TE,17,11,0.7%,0%,48,54,$1,$1,-16.1
-278,NE,"Andres Borregales",K,17,14,3.7%,0%,128,132,$1,$1,-16.1
+278,NE,"Andy Borregales",K,17,14,3.7%,0%,128,132,$1,$1,-16.1
 279,IND,"Daniel Jones",QB,11,11,2.2%,0%,279,239,$1,$1,-16.2
 280,MIA,"Nick Westbrook-Ikhine",WR,17,12,2.9%,0%,78,76,$1,$1,-16.4
 281,SF,"Jordan James",RB,17,14,4.4%,0%,9,36,$1,$1,-16.4
@@ -321,7 +321,7 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 320,UNS,"Clyde Edwards-Helaire",RB,16,18,-,0%,5,39,$1,$1,-21.9
 321,UNS,"Carson Steele",RB,16,18,-,0%,7,29,$1,$1,-22.2
 322,UNS,"Marcus Yarns",RB,16,18,-,0%,,22,$1,$1,-22.3
-323,UNS,"Gabriel Davis",WR,17,18,-,0%,45,67,$1,$1,-22.4
+323,UNS,"Gabe Davis",WR,17,18,-,0%,45,67,$1,$1,-22.4
 324,CLE,"Raheim Sanders",RB,16,9,0.1%,0%,9,22,$1,$1,-22.4
 325,UNS,"Pierre Strong Jr.",RB,16,18,-,0%,10,30,$1,$1,-23
 326,CHI,"Olamide Zaccheaus",WR,17,5,0.5%,0%,34,58,$1,$1,-23
@@ -392,7 +392,7 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 391,UNS,"Robert Woods",WR,16,18,-,0%,29,48,$1,$1,-30
 392,NYG,"Daniel Bellinger",TE,17,14,-5.9%,0%,19,19,$1,$1,-30.2
 393,DEN,"Caleb Lohner",TE,17,12,1.9%,0%,0,15,$1,$1,-30.7
-394,UNS,"D.J. Chark Jr.",WR,17,18,-,0%,2,47,$1,$1,-31
+394,UNS,"DJ Chark Jr.",WR,17,18,-,0%,2,47,$1,$1,-31
 395,BAL,"Charlie Kolar",TE,17,7,4.6%,0%,13,19,$1,$1,-31.2
 396,UNS,"Treylon Burks",WR,16,18,-,0%,6,49,$1,$1,-31.3
 397,PHI,"Kylen Granson",TE,17,9,-4.5%,0%,6,19,$1,$1,-31.3
@@ -404,7 +404,7 @@ Rank,Team,Player,"Fantasy Position",Games,Bye,SOS,InjuryRisk,"Consensus Proj","D
 403,ARI,"Zay Jones",WR,17,8,0.9%,0%,31,45,$1,$1,-31.8
 404,UNS,"Donovan Edwards",RB,16,18,-,0%,5,14,$1,$1,-31.8
 405,CIN,"Tanner McLachlan",TE,17,10,0.5%,0%,0,16,$1,$1,-31.9
-406,IND,"Andrew Ogletree",TE,17,11,0.4%,0%,22,14,$1,$1,-32.1
+406,IND,"Drew Ogletree",TE,17,11,0.4%,0%,22,14,$1,$1,-32.1
 407,TB,"Devin Culp",TE,17,9,-2.6%,0%,13,17,$1,$1,-32.2
 408,NYJ,"Arian Smith",WR,17,9,3%,0%,24,41,$1,$1,-32.3
 409,PHI,"Jahan Dotson",WR,17,9,1.1%,0%,39,33,$1,$1,-32.4

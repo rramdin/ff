@@ -199,9 +199,6 @@ class Team:
         return f"[bold #{self.color}]{self.long_name}[/bold #{self.color}]"
 
 
-teams: dict[str, Team] = {}
-
-
 class WeekFPPGs(collections.UserList[float]):
     def __init__(self, obj: Any | None = None) -> None:
         super().__init__(obj if obj else list())
@@ -562,9 +559,6 @@ class PlayerLookup:
         return p
 
 
-players = PlayerLookup()
-
-
 class FantasyTeam:
     def __init__(self, name: str, team_id: str) -> None:
         self.name = name
@@ -612,6 +606,8 @@ fantasy_team_names = {
 fantasy_team_roster_id = {
     0: UNKNOWN_TEAM,
 }
+players = PlayerLookup()
+teams: dict[str, Team] = {}
 
 
 def print_header(s: str) -> None:
@@ -872,7 +868,7 @@ def load_sleeper() -> None:
                 continue
             pl = players.find(name)
             if not pl:
-                logging.error("Could not find %s", name)
+                logging.info("Could not find %s", name)
                 continue
             pl.sleeper_auction_value = int(r["cost"].replace("$", ""))
 
@@ -966,7 +962,7 @@ def load_draft_values_gen(players: PlayerLookup) -> None:
                 continue
             p = players.find(name)
             if not p:
-                logging.error("Could not lookup %s", name)
+                logging.info("Could not lookup %s", name)
                 continue
 
             p.draft_value = int(float(r["DS AuctionValue"].replace("$", "")))
