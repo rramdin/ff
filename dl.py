@@ -23,11 +23,12 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="analyze", formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument('-v', '--verbose', dest="verbose", action="store_true")
+    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true")
     global VERBOSE
     args = parser.parse_args()
     VERBOSE = args.verbose
     return args
+
 
 def main():
     league = League(LEAGUE_ID)
@@ -40,6 +41,6 @@ def main():
     with open("data/nfl_players.json", "w") as f:
         json.dump(nfl_players, f)
 
+
 if __name__ == "__main__":
     main()
-

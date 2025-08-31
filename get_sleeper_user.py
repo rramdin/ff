@@ -6,4 +6,3 @@ if len(sys.argv) != 2:
     sys.exit(1)
 u = User(sys.argv[1])
 print(u.get_user_id())
-

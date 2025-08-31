@@ -13,4 +13,3 @@ DRAFT_ID = "1180175940712742913"
 
 
 KEEPERS_FILE = "data/2024_keeper_costs.json"
-

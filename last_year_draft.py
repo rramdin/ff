@@ -19,6 +19,7 @@ VERBOSE = False
 PREV_LEAGUE_ID = "1121477093499543552"
 LEAGUE_ID = "1180175940712742912"
 
+
 def download_file(url, filename):
     try:
         with urllib.request.urlopen(url) as response:
@@ -43,17 +44,17 @@ def main():
     player_costs = {}
 
     for p in draft:
-        player = players.get(p['metadata']['player_id'])
+        player = players.get(p["metadata"]["player_id"])
         if not player:
             print(f"Player {p['player_id']} not found in players")
             continue
-        if player['position'] == 'DEF':
+        if player["position"] == "DEF":
             continue
-        cost = int(p['metadata'].get('amount', 0))
-        player_costs[player['full_name']]  = cost
+        cost = int(p["metadata"].get("amount", 0))
+        player_costs[player["full_name"]] = cost
     for p in sorted(player_costs, key=lambda p: player_costs[p], reverse=True):
         print(p, player_costs[p])
 
+
 if __name__ == "__main__":
     main()
-

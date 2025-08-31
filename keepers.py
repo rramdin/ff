@@ -19,6 +19,7 @@ VERBOSE = False
 PREV_LEAGUE_ID = "1121477093499543552"
 LEAGUE_ID = "1180175940712742912"
 
+
 def download_file(url, filename):
     try:
         with urllib.request.urlopen(url) as response:
@@ -43,15 +44,14 @@ def main():
     player_costs = {}
 
     for p in draft:
-        player = players.get(p['metadata']['player_id'])
+        player = players.get(p["metadata"]["player_id"])
         if not player:
             print(f"Player {p['player_id']} not found in players")
             continue
-        if player['position'] == 'DEF':
+        if player["position"] == "DEF":
             continue
-        cost = int(p['metadata'].get('amount', 0))
-        player_costs[int(p['metadata']['player_id'])] = cost
-
+        cost = int(p["metadata"].get("amount", 0))
+        player_costs[int(p["metadata"]["player_id"])] = cost
 
     print(json.dumps(draft, indent=4))
     for week in range(1, 13):
@@ -62,11 +62,11 @@ def main():
                 if t["adds"]:
                     for player_id, _ in t["adds"].items():
                         p = players[player_id]
-                        if p['position'] == 'DEF':
+                        if p["position"] == "DEF":
                             continue
                         cost = t["settings"]["waiver_bid"]
                         player_costs[int(player_id)] = cost
-                        print("player:", players[player_id]['full_name'], "cost:", cost)
+                        print("player:", players[player_id]["full_name"], "cost:", cost)
 
     with open("data/2024_keeper_costs.json", "w") as f:
         json.dump(player_costs, f, indent=4)
@@ -74,4 +74,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,21 +1,23 @@
 import csv, re
 
-postions = ['QB', 'RB', 'WR', 'TE', 'K']
+postions = ["QB", "RB", "WR", "TE", "K"]
 rows = []
 for position in postions:
-    with open(f"data/FantasyPros_Fantasy_Football_2025_{position}_Matchups.csv", "r") as file:
+    with open(
+        f"data/FantasyPros_Fantasy_Football_2025_{position}_Matchups.csv", "r"
+    ) as file:
         reader = csv.reader(file)
         next(reader)  # Skip the header row
         for row in reader:
             rows.append(row)
 
+
 def parse_name(name):
-    name_maps = {
-    }
+    name_maps = {}
     for token in ["Sr.", "Jr."]:
         spl = name.split(token)
         if len(spl) > 1:
-            return spl[0].strip() # + " " + token
+            return spl[0].strip()  # + " " + token
     m = re.match(r"^[A-Z]\.[A-Z]\.", name)
     if m:
         spl = name.split(m.group(0))
@@ -29,7 +31,6 @@ def parse_name(name):
     if name.startswith("Amon-Ra St. Brown"):
         return "Amon-Ra St. Brown"
 
-
     m = re.match(r"([-'A-Za-z ]+)[A-Z]\.", name)
     if not m:
         print(name)
@@ -40,6 +41,7 @@ def parse_name(name):
     if name.endswith(" III"):
         name = name[:-4].strip()
     return name
+
 
 players = {}
 for r in rows:
@@ -71,6 +73,5 @@ for r in rows:
 
 with open("data/2025_matchups.json", "w") as f:
     import json
+
     json.dump(players, f, indent=2)
-
-
