@@ -1,7 +1,9 @@
 beautifulsoup4==4.13.4
+black==25.1.0
 bs4==0.0.2
 certifi==2025.7.14
 charset-normalizer==3.4.2
+click==8.2.1
 fuzz==0.1.1
 fzf.py==0.0.1
 idna==3.10
@@ -11,7 +13,9 @@ mdurl==0.1.2
 memoize==1.0.0
 mypy==1.17.1
 mypy_extensions==1.1.0
+packaging==25.0
 pathspec==0.12.1
+platformdirs==4.4.0
 prompt_toolkit==3.0.51
 Pygments==2.19.2
 questionary==2.1.0
