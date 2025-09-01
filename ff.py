@@ -49,10 +49,6 @@ PRE_DRAFT = True
 REFRESH_RATE = 15  # seconds
 
 # Files downloaded from sleeper when --refresh is specified
-PICKS_FILE = "data/picks.json"
-DRAFT_FILE = "data/draft.json"
-ROSTERS_FILE = "data/rosters.json"
-USERS_FILE = "data/users.json"
 MATCHUPS_FILE = "data/2025_matchups.json"
 PLAYERS_FILE = "data/nfl_players.json"
 
@@ -126,44 +122,60 @@ OVERALL_TIER = "Overall"
 TOP_TIERS = "TOP"
 ALL_TIERS = "ALL"
 
-CONFIG_NAME = f"{getpass.getuser()}"
-try:
-    CONFIG = __import__(CONFIG_NAME)
-except:
-    logging.error(
-        "Create a file at %s.py with sleeper" " LEAGUE_ID and MY_USER_ID", CONFIG_NAME
-    )
-    logging.error("Go to https://sleeper.com/")
-    logging.error("Go to your league, your league ID is in the URL")
-    logging.error(
-        "Go to https://api.sleeper.app/v1/user/<user_id>"
-        " and find user_id or use get_sleeper_user.py"
-    )
-    sys.exit(1)
-
+DEFAULT_CONFIG_NAME = f"osb"
 STATE_FILE = ""
-LEAGUE_ID = ""
 MY_USER_ID = ""
+
+LEAGUE_ID = ""
 DRAFT_ID = None
 KEEPERS_FILE = ""
+PICKS_FILE = ""
+DRAFT_FILE = ""
+ROSTERS_FILE = ""
+USERS_FILE = ""
 
 
-def load_config() -> None:
-    def get(s: str, default: T) -> str | T:
+def load_config(config_name) -> None:
+    global CONFIG
+    try:
+        CONFIG = __import__(config_name)
+    except:
+        logging.error(
+            "Create a file at %s.py with sleeper" " LEAGUE_ID and MY_USER_ID", config_name
+        )
+        logging.error("Go to https://sleeper.com/")
+        logging.error("Go to your league, your league ID is in the URL")
+        logging.error(
+            "Go to https://api.sleeper.app/v1/user/<user_id>"
+            " and find user_id or use get_sleeper_user.py"
+        )
+        sys.exit(1)
+
+    def get(s: str, required:bool = True) -> str:
         global CONFIG
         if hasattr(CONFIG, s):
             return getattr(CONFIG, s)
-        return default
+        else:
+            if required:
+                raise RuntimeError(f"Missing required config '{s}'")
+        return ""
 
-    global STATE_FILE, LEAGUE_ID, MY_USER_ID, DRAFT_ID, KEEPERS_FILE
-    STATE_FILE = get("STATE_FILE", f"data/local_state_{getpass.getuser()}.json")
-    LEAGUE_ID = get("LEAGUE_ID", "")
-    MY_USER_ID = get("MY_USER_ID", "")
-    DRAFT_ID = get("DRAFT_ID", None)
-    KEEPERS_FILE = get("KEEPERS_FILE", "")
+    global STATE_FILE, LEAGUE_ID, MY_USER_ID, DRAFT_ID, KEEPERS_FILE, PICKS_FILE, DRAFT_FILE, ROSTERS_FILE, USERS_FILE
 
+    STATE_FILE = get("STATE_FILE", required=False)
+    if not STATE_FILE:
+        STATE_FILE =  f"data/local_state_{getpass.getuser()}.json"
+    LEAGUE_ID = get("LEAGUE_ID", True)
+    MY_USER_ID = get("MY_USER_ID", True)
+    DRAFT_ID = get("DRAFT_ID", required=False)
 
-load_config()
+    FILE_INFIX = get("FILE_INFIX", True)
+
+    KEEPERS_FILE = f"data/2024_{FILE_INFIX}_keeper_costs.json"
+    PICKS_FILE = f"data/{FILE_INFIX}_picks.json"
+    DRAFT_FILE = f"data/{FILE_INFIX}_draft.json"
+    ROSTERS_FILE = f"data/{FILE_INFIX}_rosters.json"
+    USERS_FILE = f"data/{FILE_INFIX}_users.json"
 
 
 class Matchup:
@@ -1046,7 +1058,7 @@ def load_ol_def_rankings(players: PlayerLookup) -> None:
 
 
 def load_keeper_costs(players: PlayerLookup) -> None:
-    if not KEEPERS_FILE:
+    if not os.path.exists(KEEPERS_FILE):
         return
     with open(KEEPERS_FILE, "r") as f:
         j = json.loads(f.read())
@@ -1987,6 +1999,8 @@ def download_nfl_players() -> None:
 def main() -> None:
     global players, local_state, REFRESH_RATE
 
+    load_config(args.config)
+
     if args.refresh:
         download_nfl_players()
 
@@ -2057,6 +2071,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("-d", "--draft", dest="num_draft", type=int, default=1)
     parser.add_argument("-l", "--play", dest="num_play", type=int, default=1)
     parser.add_argument("-s", "--sim", dest="sim", action="store_true")
+    parser.add_argument("-c", "--config", dest="config", default=DEFAULT_CONFIG_NAME)
     parser.add_argument("-v", "--verbose", dest="verbose", action="store_true")
     parser.add_argument("--max-age", dest="max_age", type=int, default=100)
     parser.add_argument("--refresh", dest="refresh", action="store_true")

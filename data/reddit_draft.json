@@ -1,0 +1,57 @@
+{
+    "created": 1756131118656,
+    "creators": [
+        "1131988413042925568"
+    ],
+    "draft_id": "1265709285287923712",
+    "draft_order": null,
+    "last_message_id": "1265709285287923712",
+    "last_message_time": 1756131118656,
+    "last_picked": null,
+    "league_id": "1265709285279539200",
+    "metadata": {
+        "description": "",
+        "name": "reddit league",
+        "scoring_type": "half_ppr"
+    },
+    "season": "2025",
+    "season_type": "regular",
+    "settings": {
+        "alpha_sort": 0,
+        "autopause_enabled": 0,
+        "autopause_end_time": 900,
+        "autopause_start_time": 180,
+        "autostart": 0,
+        "cpu_autopick": 1,
+        "enforce_position_limits": 1,
+        "nomination_timer": 10,
+        "pick_timer": 30,
+        "player_type": 0,
+        "reversal_round": 0,
+        "rounds": 13,
+        "slots_bn": 5,
+        "slots_def": 1,
+        "slots_flex": 1,
+        "slots_qb": 1,
+        "slots_rb": 2,
+        "slots_te": 1,
+        "slots_wr": 2,
+        "teams": 10
+    },
+    "slot_to_roster_id": {
+        "1": 1,
+        "10": 10,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5,
+        "6": 6,
+        "7": 7,
+        "8": 8,
+        "9": 9
+    },
+    "sport": "nfl",
+    "start_time": 1756778400000,
+    "status": "pre_draft",
+    "type": "snake"
+}

@@ -1,0 +1,10 @@
+# STATE_FILE = "data/local_state_rramdin.json"
+
+MY_USER_ID = "1121497299739418624"
+
+# Reddit league
+LEAGUE_ID = "1265709285279539200"
+DRAFT_ID = "1265709285287923712"
+
+FILE_INFIX = "reddit"
+

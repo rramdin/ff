@@ -1,0 +1,227 @@
+[
+    {
+        "avatar": "04a9f7bb950ed0eb130312ba4b1d06bd",
+        "display_name": "WorldExplorer",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_sms": "on",
+            "allow_pn": "on",
+            "mascot_item_type_id_leg_13": "saint-oct-19",
+            "team_name_update": "on",
+            "join_voice_pn": "on",
+            "transaction_free_agent": "on",
+            "mascot_item_type_id_leg_17": "saint-oct-19",
+            "mascot_item_type_id_leg_12": "saint-oct-19",
+            "mascot_item_type_id_leg_1": "saint",
+            "player_like_pn": "on",
+            "mascot_message_emotion_leg_2": "taunting",
+            "mascot_item_type_id_leg_9": "saint-oct-19",
+            "mascot_item_type_id_leg_4": "saint-oct-19",
+            "transaction_commissioner": "on",
+            "mascot_item_type_id_leg_3": "saint-oct-19",
+            "mascot_item_type_id_leg_18": "saint-oct-19",
+            "mascot_item_type_id_leg_10": "saint-oct-19",
+            "mascot_item_type_id_leg_5": "saint-oct-19",
+            "mascot_message": "on",
+            "trade_block_pn": "on",
+            "mascot_item_type_id_leg_7": "saint-oct-19",
+            "archived": "off",
+            "mascot_item_type_id_leg_14": "saint-oct-19",
+            "mascot_item_type_id_leg_6": "saint-oct-19",
+            "user_message_pn": "on",
+            "mascot_item_type_id_leg_11": "saint-oct-19",
+            "mascot_item_type_id_leg_2": "saint-oct-19",
+            "mention_pn": "on",
+            "player_nickname_update": "on",
+            "transaction_waiver": "on",
+            "mascot_item_type_id_leg_15": "saint-oct-19",
+            "mascot_message_emotion_leg_1": "idle",
+            "team_name": "Soldier Boy",
+            "mascot_item_type_id_leg_8": "saint-oct-19",
+            "avatar": "https://sleepercdn.com/uploads/da51787207f8b576f2bdbe54eedc7dc7.jpg",
+            "mascot_item_type_id_leg_16": "saint-oct-19",
+            "transaction_trade": "on"
+        },
+        "settings": null,
+        "user_id": "444584876830617600"
+    },
+    {
+        "avatar": "68dcadbe2d7472fbf127be83fb20faf9",
+        "display_name": "Dkennedy21",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "474999165558976512"
+    },
+    {
+        "avatar": "e26a5e1ee6675ef7e0eced54244f8854",
+        "display_name": "Hurricane06ers",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on",
+            "team_name": "Homelander"
+        },
+        "settings": null,
+        "user_id": "545782112458039296"
+    },
+    {
+        "avatar": "2ff5f107fac2a7a77a07784a7a8d1cdf",
+        "display_name": "AlRokerx",
+        "is_bot": false,
+        "is_owner": true,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on",
+            "team_name": "Starlight"
+        },
+        "settings": null,
+        "user_id": "550627156910923776"
+    },
+    {
+        "avatar": "5465a43bf96c8b16dc460cbf1b67e29c",
+        "display_name": "ralt1234",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "mascot_item_type_id_leg_10": "taco",
+            "mascot_item_type_id_leg_11": "taco",
+            "mascot_item_type_id_leg_12": "taco",
+            "mascot_item_type_id_leg_13": "taco",
+            "mascot_item_type_id_leg_14": "taco",
+            "mascot_item_type_id_leg_15": "taco",
+            "mascot_item_type_id_leg_16": "taco",
+            "mascot_item_type_id_leg_17": "taco",
+            "mascot_item_type_id_leg_18": "taco",
+            "mascot_item_type_id_leg_3": "taco",
+            "mascot_item_type_id_leg_4": "taco",
+            "mascot_item_type_id_leg_5": "taco",
+            "mascot_item_type_id_leg_6": "taco",
+            "mascot_item_type_id_leg_7": "taco",
+            "mascot_item_type_id_leg_8": "taco",
+            "mascot_item_type_id_leg_9": "taco",
+            "mascot_message_emotion_leg_3": "idle",
+            "mention_pn": "on",
+            "team_name": "Hughie"
+        },
+        "settings": null,
+        "user_id": "588586490741694464"
+    },
+    {
+        "avatar": "9cf0ba07b858634478ff0edec78d0412",
+        "display_name": "tknir",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "archived": "off",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "606256735535046656"
+    },
+    {
+        "avatar": null,
+        "display_name": "trucdoan",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "736264751432196096"
+    },
+    {
+        "avatar": "15d7cf259bc30eab8f6120f45f652fb6",
+        "display_name": "mattymayhem978",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on",
+            "team_name": "Show me dem Tds"
+        },
+        "settings": null,
+        "user_id": "868379883112431616"
+    },
+    {
+        "avatar": "fa27a89f1e78cb7eaf35717c9e933269",
+        "display_name": "DrABC",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "archived": "off",
+            "avatar": "https://sleepercdn.com/uploads/00b606de4a8b5abba4daaae9e0c75c47.jpg",
+            "mention_pn": "on",
+            "team_name": "Football is Life."
+        },
+        "settings": null,
+        "user_id": "870897365303861248"
+    },
+    {
+        "avatar": "15d7cf259bc30eab8f6120f45f652fb6",
+        "display_name": "patriots9",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "archived": "off",
+            "avatar": "https://sleepercdn.com/uploads/a45e8a40fe4fcae0417aa89b1420e91a.jpg",
+            "mention_pn": "on",
+            "team_name": "Buckshank"
+        },
+        "settings": null,
+        "user_id": "872285550747566080"
+    },
+    {
+        "avatar": "8c1b65120643b6210962758c1fba9e60",
+        "display_name": "butimacheerleader",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "allow_sms": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1003144196217356288"
+    },
+    {
+        "avatar": "f9ab68e810267e6d3ff66f6510d3850b",
+        "display_name": "RobbyZone",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1257067166914588672",
+        "metadata": {
+            "allow_pn": "on",
+            "archived": "off",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1121497299739418624"
+    }
+]

@@ -1,0 +1,136 @@
+[
+    {
+        "avatar": "0b0c6764f4ca773e86260b43c1731dfe",
+        "display_name": "beakes41",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "462824533976412160"
+    },
+    {
+        "avatar": "44865e87ece0b82e715c9bafc37bb4a3",
+        "display_name": "JawJay",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "573689791924957184"
+    },
+    {
+        "avatar": "2c8a1173e82bccc42b1a0b838958792c",
+        "display_name": "nhorsley",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on",
+            "team_name": "FaultyLandmines"
+        },
+        "settings": null,
+        "user_id": "606691830968434688"
+    },
+    {
+        "avatar": "2158e69e8b80660131a4127f4d13af8b",
+        "display_name": "Keystone208",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1000862288573788160"
+    },
+    {
+        "avatar": "f9ab68e810267e6d3ff66f6510d3850b",
+        "display_name": "RobbyZone",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "archived": "off",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1121497299739418624"
+    },
+    {
+        "avatar": "b319fdf8b7b5b0359d3c78622ba4d70c",
+        "display_name": "FreshPrinceofMN",
+        "is_bot": false,
+        "is_owner": true,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1131988413042925568"
+    },
+    {
+        "avatar": "e7af4deab0289b4f5505646424895246",
+        "display_name": "69Mahomies420",
+        "is_bot": false,
+        "is_owner": false,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "avatar": "https://sleepercdn.com/uploads/2c689e07011ded3c7d14e1df0d9fd935.jpg",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1137439761712467968"
+    },
+    {
+        "avatar": "6dcb769800ba0dc7b880911292911cf4",
+        "display_name": "MothCafe",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1138630147718488064"
+    },
+    {
+        "avatar": "0677cdac63f893e4ff65cd23cc216f96",
+        "display_name": "bluehat",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on",
+            "team_name": "Southside Slampigs"
+        },
+        "settings": null,
+        "user_id": "1138630227360112640"
+    },
+    {
+        "avatar": "578c6b253dd7b4bab45382e1af102204",
+        "display_name": "jhernanskey",
+        "is_bot": false,
+        "is_owner": null,
+        "league_id": "1265709285279539200",
+        "metadata": {
+            "allow_pn": "on",
+            "mention_pn": "on"
+        },
+        "settings": null,
+        "user_id": "1267191408125546496"
+    }
+]
