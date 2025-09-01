@@ -1742,24 +1742,25 @@ def print_tier_info(pos: str, tier: int) -> None:
     last_price = None
     total_price = 0
 
-    for p in players.sleeper.values():
-        if pos == OVERALL_TIER:
-            if p.overall_tier != tier:
+    with draft.lock:
+        for p in players.sleeper.values():
+            if pos == OVERALL_TIER:
+                if p.overall_tier != tier:
+                    continue
+            elif p.position != pos or p.pos_tier != tier:
                 continue
-        elif p.position != pos or p.pos_tier != tier:
-            continue
-        ps.append(p)
-        if p.actual_draft_pos is not None:
-            if p.actual_draft_pos == 0:
-                num_keeper += 1
+            ps.append(p)
+            if p.actual_draft_pos is not None:
+                if p.actual_draft_pos == 0:
+                    num_keeper += 1
+                else:
+                    num_drafted += 1
+                    if first_price is None:
+                        first_price = p.actual_cost
+                    last_price = p.actual_cost
+                    total_price += p.actual_cost
             else:
-                num_drafted += 1
-                if first_price is None:
-                    first_price = p.actual_cost
-                last_price = p.actual_cost
-                total_price += p.actual_cost
-        else:
-            num_remaining += 1
+                num_remaining += 1
 
     ps.sort(
         key=lambda p: (
@@ -1775,12 +1776,12 @@ def print_tier_info(pos: str, tier: int) -> None:
 
     for p in ps:
         if p.actual_draft_pos is not None:
-            draft = str(p.actual_draft_pos) if p.actual_draft_pos else "K"
+            draft_pos = str(p.actual_draft_pos) if p.actual_draft_pos else "K"
             cost = f"${p.actual_cost}"
         else:
-            draft = ""
+            draft_pos = ""
             cost = ""
-        table.add_row(draft, cost, p.tostr(emoji=False, notes=False))
+        table.add_row(draft_pos, cost, p.tostr(emoji=False, notes=False))
     console = Console()
     console.print(table)
     print()
