@@ -71,6 +71,15 @@ def get_keepers(league_id):
                         cost = t["settings"]["waiver_bid"]
                         player_costs[int(player_id)] = cost
                         #print("player:", players[player_id]["full_name"], "cost:", cost)
+                if t["drops"]:
+                    for player_id, _ in t["drops"].items():
+                        p = players[player_id]
+                        if p["position"] == "DEF":
+                            continue
+                        cost = t["settings"]["waiver_bid"]
+                        pid = int(player_id)
+                        if pid in player_costs:
+                            del player_costs[pid]
     return player_costs, keepers
 
 def print_keepers(league_id, costs):
