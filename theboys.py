@@ -8,3 +8,12 @@ DRAFT_ID = "1257067166922985472"
 
 FILE_INFIX = "theboys"
 
+DRAFT_SETTINGS = {
+    "QB": [2, 3],
+    "RB": [3, 5],
+    "WR": [3, 5],
+    "TE": [1, 2],
+}
+
+DRAFT_VALUE_FILE_GEN = "data/rankings-te-premium-superflex.csv"
+

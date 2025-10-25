@@ -11,3 +11,14 @@ DRAFT_ID = "1180175940712742913"
 
 FILE_INFIX = "osb"
 
+# 16 players; 1 DEF, 1 K
+DRAFT_SETTINGS = {
+    "QB": [1, 2],
+    "RB": [3, 6],
+    "WR": [2, 4],
+    "TE": [1, 2],
+}
+
+DRAFT_VALUE_FILE_GEN = "data/2025-draft-sharks-auction-values-half-ppr.csv"
+INCLUDE_KEEPERS = True
+

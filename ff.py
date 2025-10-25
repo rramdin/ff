@@ -23,7 +23,6 @@ import math
 import getpass
 from fzf import Fzf, fzf  # type: ignore[import-untyped]
 
-from sleeper_wrapper import League, Players  # type: ignore[import-untyped]
 from functools import cache
 from thefuzz import process, fuzz  # type: ignore[import-untyped]
 from rich import print
@@ -51,6 +50,7 @@ REFRESH_RATE = 15  # seconds
 # Files downloaded from sleeper when --refresh is specified
 MATCHUPS_FILE = "data/2025_matchups.json"
 PLAYERS_FILE = "data/nfl_players.json"
+PLAYERS_FILE = "data/nfl_players2.json"
 
 # Rotowire PPG projections
 PROJECTIONS_FILE = "data/rotowire-projections.csv"
@@ -76,6 +76,8 @@ INJURIES_FILE = "data/2025_draft_shark_injury_predictions.csv"
 
 # For loading first downs per route run
 ROUTES_RUN_FILE = "data/2024_first_down_per_route_run.csv"
+
+OSB_ROS_FILE = "data/one-street-bowl-ros-rankings.csv"
 
 # COMBOS -- Moneyball!
 #
@@ -109,13 +111,7 @@ PERCENTAGE_POINTS_VAR = 0.3
 NUM_RECOMMEND = 4
 COMBOS_MAX_WEEK = 13
 COMBOS_NUM_GAMES = 10
-# 16 players; 1 DEF, 1 K
-DRAFT_SETTINGS = {
-    "QB": [1, 2],
-    "RB": [3, 6],
-    "WR": [2, 4],
-    "TE": [1, 2],
-}
+DRAFT_SETTINGS = {}
 MAX_AGE = 100
 
 OVERALL_TIER = "Overall"
@@ -151,31 +147,40 @@ def load_config(config_name) -> None:
         )
         sys.exit(1)
 
-    def get(s: str, required:bool = True) -> str:
+    def get(s: str, default_fn: Callable[[], T] = str, required:bool = True) -> T:
         global CONFIG
         if hasattr(CONFIG, s):
             return getattr(CONFIG, s)
         else:
             if required:
                 raise RuntimeError(f"Missing required config '{s}'")
-        return ""
+        return default_fn()
 
-    global STATE_FILE, LEAGUE_ID, MY_USER_ID, DRAFT_ID, KEEPERS_FILE, PICKS_FILE, DRAFT_FILE, ROSTERS_FILE, USERS_FILE
+    global STATE_FILE, LEAGUE_ID, MY_USER_ID, DRAFT_ID, KEEPERS_FILE, PICKS_FILE, DRAFT_FILE, ROSTERS_FILE, USERS_FILE, DRAFT_SETTINGS, DRAFT_VALUE_FILE, DRAFT_VALUE_FILE_GEN
 
     STATE_FILE = get("STATE_FILE", required=False)
     if not STATE_FILE:
         STATE_FILE =  f"data/local_state_{getpass.getuser()}.json"
-    LEAGUE_ID = get("LEAGUE_ID", True)
-    MY_USER_ID = get("MY_USER_ID", True)
+    LEAGUE_ID = get("LEAGUE_ID")
+    MY_USER_ID = get("MY_USER_ID")
     DRAFT_ID = get("DRAFT_ID", required=False)
 
-    FILE_INFIX = get("FILE_INFIX", True)
+    FILE_INFIX = get("FILE_INFIX")
 
-    KEEPERS_FILE = f"data/2024_{FILE_INFIX}_keeper_costs.json"
+    if get("INCLUDE_KEEPERS", required=False):
+        KEEPERS_FILE = f"data/2024_{FILE_INFIX}_keeper_costs.json"
+    else:
+        KEEPERS_FILE = ""
     PICKS_FILE = f"data/{FILE_INFIX}_picks.json"
     DRAFT_FILE = f"data/{FILE_INFIX}_draft.json"
     ROSTERS_FILE = f"data/{FILE_INFIX}_rosters.json"
     USERS_FILE = f"data/{FILE_INFIX}_users.json"
+    DRAFT_VALUE_FILE = f"data/2025_predraft_ds_{FILE_INFIX}.csv"
+    DRAFT_VALUE_FILE_GEN = get("DRAFT_VALUE_FILE_GEN")
+
+    draft_settings = get("DRAFT_SETTINGS", default_fn=dict, required=False)
+    if draft_settings:
+        DRAFT_SETTINGS = draft_settings
 
 
 class Matchup:
@@ -522,17 +527,17 @@ class PlayerLookup:
     def add(self, player: Player) -> None:
         self.sleeper[player.sleeper_id] = player
 
-        existing = self.name.get(player.name)
+        existing = self.name.get(player.name.unf)
         if existing:
             if player.search_rank > existing.search_rank:
                 logging.debug(f"{player.name} already in players_by_name, overwriting")
-                self.name[player.name] = player
+                self.name[player.name.unf] = player
             else:
                 logging.debug(
                     f"{player.name} already in players_by_name, not overwriting"
                 )
         else:
-            self.name[player.name] = player
+            self.name[player.name.unf] = player
 
         for attr in dir(player):
             if attr.endswith("_id"):
@@ -556,16 +561,20 @@ class PlayerLookup:
         for suffix in [" Jr.", " Sr.", " III", " II"]:
             if name.endswith(suffix):
                 name = name[: -len(suffix)].strip()
-        p = players.name.get(name)
+        p = self.name.get(name)
         if p:
             return p
+        if name.startswith("Marquise"):
+            p = self.name.get(name.replace("Marquise", "Hollywood"))
+            if p:
+                return p
 
-        tokens = process.extract(name, players.name.keys(), scorer=fuzz.token_set_ratio)
+        tokens = process.extract(name, self.name.keys(), scorer=fuzz.token_set_ratio)
         tokens.sort(key=lambda x: x[1], reverse=True)
         new_name = tokens[0][0]
         if tokens[0][1] > 80:
             name = new_name
-            p = players.name.get(name)
+            p = players.find(name)
         else:
             logging.info("Could not resolve %s -> %s", name, new_name)
         return p
@@ -954,7 +963,8 @@ def load_draft_values(players: PlayerLookup) -> None:
                 logging.info("Could not lookup %s", name)
                 continue
 
-            p.draft_value = int(float(r["Auction $"].replace("$", "")))
+            if "Auction $" in r:
+                p.draft_value = int(float(r["Auction $"].replace("$", "")))
             p.projection = float(r["DS Proj"])
             p.adp = float(r["ADP"])
             p.overall_tier = int(float(r["Overall Tier"]))
@@ -977,7 +987,8 @@ def load_draft_values_gen(players: PlayerLookup) -> None:
                 logging.info("Could not lookup %s", name)
                 continue
 
-            p.draft_value = int(float(r["DS AuctionValue"].replace("$", "")))
+            if "DS AuctionValue" in r:
+                p.draft_value = int(float(r["DS AuctionValue"].replace("$", "")))
             p.projection = float(r["DS Proj"])
 
 
@@ -1104,158 +1115,15 @@ def load_extra(players: PlayerLookup) -> None:
 
 def download_file(url: str, filename: str) -> None:
     try:
-        with urllib.request.urlopen(url) as response:
-            data = json.load(response)
-            with open(filename, "w") as f:
-                json.dump(data, f, indent=4)
-            logging.info(f"Downloaded {filename}")
+        os.system(f"curl {url} > {filename} 2>/dev/null")
+        #with urllib.request.urlopen(url) as response:
+        #    data = json.load(response)
+        #    with open(filename, "w") as f:
+        #        json.dump(data, f, indent=4)
+        logging.info(f"Downloaded {filename}")
     except Exception as e:
         logging.error(f"Error downloading {filename}: {e}")
 
-
-class Draft:
-    def __init__(self) -> None:
-        self.picks: list[tuple[str, int, Player, int, int, int]] = []
-        self.thread: threading.Thread | None = None
-        self.lock = threading.RLock()
-        self.slot_to_team: dict[int, FantasyTeam] = {}
-        self.initial_load = True
-        self.is_sim = False
-
-    def start(self) -> None:
-        self.thread = threading.Thread(target=self.run, daemon=True)
-        self.refresh()
-        self.thread.start()
-
-    def start_sim(self) -> None:
-        self.is_sim = True
-        self.refresh()
-        self.thread = threading.Thread(target=self.run, daemon=True)
-        self.thread.start()
-
-    def run(self) -> None:
-        while True:
-            self.refresh()
-            time.sleep(REFRESH_RATE)
-
-    def refresh(self) -> None:
-        if not DRAFT_ID:
-            logging.warning("DRAFT_ID is not set, skipping draft refresh")
-            return
-        logging.debug("Refreshing draft picks...")
-        if not self.is_sim:
-            download_file(
-                f"https://api.sleeper.app/v1/draft/{DRAFT_ID}/picks", PICKS_FILE
-            )
-            download_file(f"https://api.sleeper.app/v1/draft/{DRAFT_ID}", DRAFT_FILE)
-        self.load()
-
-    def reapply_all(self) -> None:
-        for info in self.picks:
-            self.apply(*info)
-
-    def apply(
-        self,
-        picked_by: str,
-        draft_slot: int,
-        player: Player,
-        amount: int,
-        pick_no: int,
-        draft_round: int,
-    ) -> None:
-        if not draft_slot and player.fantasy_team:
-            logging.warning(
-                f"Player {player.name} has no draft_slot "
-                "but has a fantasy team, not removing from team"
-            )
-            return
-
-        if picked_by:
-            fantasy_team = fantasy_teams.get(picked_by, UNKNOWN_TEAM)
-        else:
-            fantasy_team = self.slot_to_team[draft_slot]
-
-        with self.lock:
-            if fantasy_team is not None:
-                fantasy_team.add_player(player)
-
-        player.actual_cost = int(float(amount))
-        player.actual_draft_pos = max(pick_no - 24, 0)
-        if self.initial_load:
-            print(f"{fantasy_team.namec} drafted {player.name} for ${amount}")
-        else:
-            print(
-                Panel(
-                    f"{fantasy_team.namec if fantasy_team else 'Unknown Team'}"
-                    f" drafted {player.name} for ${amount}"
-                    f" - Pick #{pick_no} Round {draft_round}"
-                    f"\n\n{player.tostrl()}"
-                    f"\n\n{fantasy_team.namec}'s team:"
-                    f" {', '.join(p.name.unf for p in fantasy_team.players)}",
-                    title=f"{datetime.datetime.now().time().strftime("%H:%M:%S")} Player Drafted",
-                )
-            )
-
-        if not self.initial_load:
-            draft_analyze(verbose=False)
-            print_tier_info(OVERALL_TIER, player.overall_tier)
-            print_tier_info(player.position, player.pos_tier)
-
-    def load(self) -> None:
-        if os.path.exists(DRAFT_FILE):
-            with open(DRAFT_FILE, "r") as f:
-                j = json.loads(f.read())
-                self.slot_to_id: dict[int, int] = {}
-                for slot, roster_id in j.get("slot_to_roster_id", {}).items():
-                    self.slot_to_team[int(slot)] = fantasy_team_roster_id.get(
-                        int(roster_id), UNKNOWN_TEAM
-                    )
-        else:
-            logging.warning("Could not load draft metadata from %s", DRAFT_FILE)
-            return
-        if not os.path.exists(PICKS_FILE):
-            logging.warning("Could not load draft from %s", PICKS_FILE)
-            return
-        with open(PICKS_FILE, "r") as f:
-            j = json.loads(f.read())
-            count = 0
-            added = 0
-            for p in j:
-                count += 1
-                if count <= len(self.picks):
-                    continue
-                player = players.sleeper.get(p["metadata"]["player_id"])
-                if not player:
-                    logging.warning(f"Player {p['player_id']} not found in players")
-                    continue
-                draft_slot = int(p["draft_slot"])
-                picked_by = p.get("picked_by", 0)
-                amount = int(p["metadata"]["amount"])
-                pick_no = int(p["pick_no"])
-                draft_round = int(p["round"])
-                info = (
-                    picked_by,
-                    int(draft_slot),
-                    player,
-                    amount,
-                    pick_no,
-                    draft_round,
-                )
-                self.picks.append(info)
-                self.apply(*info)
-                added += 1
-                if self.is_sim:
-                    target = 20 if self.initial_load else 1
-                    if added >= target:
-                        break
-        self.initial_load = False
-
-
-draft = Draft()
-
-
-def refresh_draft() -> None:
-    draft.refresh()
 
 
 def load_projections_old(players: PlayerLookup) -> None:
@@ -1278,7 +1146,7 @@ def load_projections_old(players: PlayerLookup) -> None:
             fields[h] = i
         for r in track(reader, description="Loading projections", total=300):
             name = r[fields["Name"]]
-            p = players.name.get(name)
+            p = players.find(name)
             if not p:
                 logging.debug(f"skipping{name}")
                 continue
@@ -1347,6 +1215,8 @@ def do_combo(players: list[Player], n: int, m: int) -> list[Combo]:
             continue
         if len(p.weeks) < 18:
             continue
+        if p.injury_status is not None:
+            continue
         filtered.append(p)
     filtered.sort(key=lambda p: p.positional_rank)
 
@@ -1382,9 +1252,9 @@ def print_combos(combos: list[Combo]) -> None:
         for i in range(1, len(players)):
             print(f"{pad} {players[i].tostr(notes=False)}")
         rank -= 1
-        # for i in range(len(play)):
-        #     print(f"Week{i+1}: ", ", ".join([p.last_name() for p in play[i]]))
-        # print()
+        for i in range(len(play)):
+            print(f"Week{i+1}: ", ", ".join([p.last_name() for p in play[i]]))
+        print()
 
 
 def by_pos(players: PlayerLookup) -> dict[str, list[Player]]:
@@ -1475,123 +1345,9 @@ def print_roster() -> None:
 
 
 def refresh_rosters() -> None:
-    league = League(LEAGUE_ID)
-    rosters = league.get_rosters()
-    users = league.get_users()
-    with open(ROSTERS_FILE, "w") as f:
-        json.dump(rosters, f, indent=4)
-    with open(USERS_FILE, "w") as f:
-        json.dump(users, f, indent=4)
+    download_file(f"https://api.sleeper.app/v1/league/{LEAGUE_ID}/users", USERS_FILE)
+    download_file(f"https://api.sleeper.app/v1/league/{LEAGUE_ID}/rosters", ROSTERS_FILE)
 
-
-class LocalState:
-    def __init__(self, players: PlayerLookup) -> None:
-        self.players = players
-        self.overrides: dict[str, str] = {}
-        self.notes: dict[str, tuple[str, str]] = {}
-        self.load()
-
-    def load(self) -> None:
-        if os.path.exists(STATE_FILE):
-            with open(STATE_FILE, "r") as f:
-                j = json.loads(f.read())
-                overrides = j.get("overrides", {})
-                for player_id, user_id in j.get("overrides", {}).items():
-                    if user_id is None:
-                        continue
-                    self.overrides[player_id] = user_id
-                self.notes = j.get("notes", {})
-        self.apply()
-
-    def apply(self) -> None:
-        for player_id, user_id in self.overrides.items():
-            p = self.players.sleeper.get(player_id)
-            if p:
-                fantasy_teams.get(user_id, UNKNOWN_TEAM).add_player(p)
-                p.is_override = True
-
-    def save(self) -> None:
-        with open(STATE_FILE, "w") as f:
-            json.dump(
-                {
-                    "overrides": self.overrides,
-                    "notes": self.notes,
-                },
-                f,
-                indent=4,
-            )
-
-    def pick(self, player: Player) -> None:
-        with draft.lock:
-            fantasy_team = fantasy_teams.get(MY_USER_ID, UNKNOWN_TEAM)
-            fantasy_team.add_player(player)
-            self.overrides[player.sleeper_id] = fantasy_team.id
-            player.is_override = True
-            self.save()
-
-    def take(self, player: Player) -> None:
-        with draft.lock:
-            UNKNOWN_TEAM.add_player(player)
-            assert player.fantasy_team
-            self.overrides[player.sleeper_id] = player.fantasy_team.id
-            player.is_override = True
-            self.save()
-
-    def unpick(self, player: Player) -> None:
-        with draft.lock:
-            if player.fantasy_team:
-                player.fantasy_team.remove_player(player)
-            if player.sleeper_id in self.overrides:
-                del self.overrides[player.sleeper_id]
-            player.is_override = True
-            self.save()
-
-    def untake(self, player: Player) -> None:
-        with draft.lock:
-            if player.fantasy_team:
-                player.fantasy_team.remove_player(player)
-            if player.sleeper_id in self.overrides:
-                del self.overrides[player.sleeper_id]
-            player.is_override = True
-            self.save()
-
-    def clear(self, player: Player) -> None:
-        with draft.lock:
-            if player.sleeper_id in self.overrides:
-                del self.overrides[player.sleeper_id]
-            if player.fantasy_team:
-                player.fantasy_team.remove_player(player)
-            player.is_override = False
-            self.save()
-        self.apply()
-
-    def clear_notes(self, player: Player) -> None:
-        if player.sleeper_id in self.notes:
-            del self.notes[player.sleeper_id]
-            self.save()
-
-    def note(self, action: str, player: Player) -> None:
-        n = texteditor.open(self.notes.get(player.sleeper_id, [None, ""])[1])
-        if not n:
-            n = f"Player {action.lower()}"
-        self.notes[player.sleeper_id] = (action, str(n))
-        self.save()
-
-    def love_player(self, player: Player) -> None:
-        self.note("Love", player)
-
-    def like_player(self, player: Player) -> None:
-        self.note("Like", player)
-
-    def dislike_player(self, player: Player) -> None:
-        self.note("Dislike", player)
-
-    def set_team(self, player: Player, fantasy_team: FantasyTeam) -> None:
-        with draft.lock:
-            fantasy_team.add_player(player)
-            self.overrides[player.sleeper_id] = fantasy_team.id
-            player.is_override = False
-            self.save()
 
 
 # Local state store notes and liked/disliked players. The editor is selected
@@ -1744,7 +1500,7 @@ def sleeper_auctions() -> None:
     console.print(table)
 
 
-def print_tier_info(pos: str, tier: int) -> None:
+def print_tier_info(pos: str, tier: int, only_available=False) -> None:
     ps = []
 
     num_drafted = 0
@@ -1773,6 +1529,9 @@ def print_tier_info(pos: str, tier: int) -> None:
                     total_price += p.actual_cost
             else:
                 num_remaining += 1
+
+    if only_available and num_remaining == 0:
+        return
 
     ps.sort(
         key=lambda p: (
@@ -1861,12 +1620,13 @@ def input_tiers() -> None:
 
     print("tiers", tiers)
 
+    only_available = len(tiers) > 1
     for t in tiers:
         if pos == "all":
             for pos in positions:
-                print_tier_info(pos, t)
+                print_tier_info(pos, t, only_available=only_available)
         else:
-            print_tier_info(pos, t)
+            print_tier_info(pos, t, only_available=only_available)
 
 
 def input_combos() -> None:
@@ -1986,15 +1746,7 @@ def prompt(
 
 
 def download_nfl_players() -> None:
-    players = Players()
-    all_players = players.get_all_players()
-    nfl_players = {}
-    for i, p in all_players.items():
-        if p["sport"] == "nfl":
-            nfl_players[i] = p
-    with open("data/nfl_players.json", "w") as f:
-        json.dump(nfl_players, f)
-
+    download_file(f"https://api.sleeper.app/v1/players/nfl", PLAYERS_FILE)
 
 def main() -> None:
     global players, local_state, REFRESH_RATE
@@ -2085,7 +1837,7 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_args()
     logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
+        level=logging.DEBUG if args.verbose else logging.WARNING,
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
