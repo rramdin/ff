@@ -130,6 +130,7 @@ def main():
                 del costs_2025[k]
 
     print_keepers(LEAGUE_ID, costs_2025)
+    print(datetime.datetime.now())
 
     with open("data/2025_keeper_costs.json", "w") as f:
         json.dump(costs_2025, f, indent=4)
