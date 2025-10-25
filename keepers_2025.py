@@ -61,7 +61,7 @@ def get_keepers(league_id):
     for week in range(1, 13):
         #print(f"Week {week}")
         tx = league.get_transactions(week)
-        for t in tx:
+        for t in sorted(tx, key=lambda t:t["created"]):
             if t["status"] == "complete" and t["type"] == "waiver":
                 if t["adds"]:
                     for player_id, _ in t["adds"].items():
@@ -70,13 +70,11 @@ def get_keepers(league_id):
                             continue
                         cost = t["settings"]["waiver_bid"]
                         player_costs[int(player_id)] = cost
-                        #print("player:", players[player_id]["full_name"], "cost:", cost)
                 if t["drops"]:
                     for player_id, _ in t["drops"].items():
                         p = players[player_id]
                         if p["position"] == "DEF":
                             continue
-                        cost = t["settings"]["waiver_bid"]
                         pid = int(player_id)
                         if pid in player_costs:
                             del player_costs[pid]
